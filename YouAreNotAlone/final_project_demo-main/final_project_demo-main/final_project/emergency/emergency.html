@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Emergency Support — You Are Not Alone</title>
+
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="emergency.css" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav" role="banner">
+    <div class="left">
+      <img src="logo.png" alt="You Are Not Alone logo" class="logo" />
+      <div class="title">
+        <h1>You Are Not Alone</h1>
+        <p>Emergency Support</p>
+      </div>
+    </div>
+    <div class="center">
+      <span class="crisis-label">Crisis 24/7 1-800-656-4673</span>
+    </div>
+    <div class="right">
+     <a href="../homepage/homepage.html">
+       <button class="signout-btn">Back to Homepage</button>
+     </a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main" role="main">
+    <header class="hero">
+      <h2 class="hero-title">Emergency Support</h2>
+      <p class="hero-sub">If you are in danger or need urgent help, use the resources below.</p>
+    </header>
+
+    <!-- Kenyan Helplines Grid -->
+    <section class="panel resources-panel" aria-labelledby="resources-heading">
+      <h3 id="resources-heading">Support Resources in Kenya</h3>
+      <div class="resources-grid">
+
+        <!-- Emergency -->
+        <div class="resource-card">
+          <h4>Police Emergency</h4>
+          <p>Call <strong>999</strong> or <strong>112</strong> for immediate danger.</p>
+        </div>
+        <div class="resource-card">
+          <h4>Kenya Red Cross</h4>
+          <p>Medical emergencies and ambulance services: <strong>1199</strong></p>
+        </div>
+
+        <!-- Legal Aid -->
+        <div class="resource-card">
+          <h4>FIDA Kenya</h4>
+          <p>Free legal aid for survivors of gender-based violence. Helpline: <strong>+254 722 509 760</strong></p>
+        </div>
+        <div class="resource-card">
+          <h4>COVAW</h4>
+          <p>Counseling and advocacy for survivors. Helpline: <strong>0800 720 553</strong></p>
+        </div>
+
+        <!-- Counseling & Mental Health -->
+        <div class="resource-card">
+          <h4>National Sexual Assault Hotline</h4>
+          <p>24/7 confidential support: <strong>1-800-656-4673</strong></p>
+        </div>
+        <div class="resource-card">
+          <h4>One2One Youth Hotline</h4>
+          <p>Sexual health and assault support: <strong>1190</strong></p>
+        </div>
+
+        <!-- Child Protection -->
+        <div class="resource-card">
+          <h4>National Child Helpline</h4>
+          <p>Free, confidential support for children and youth: <strong>116</strong></p>
+        </div>
+
+        <!-- Community Support -->
+        <div class="resource-card">
+          <h4>Usikimye</h4>
+          <p>Emergency GBV support and safe houses: <strong>0800 000 999</strong></p>
+        </div>
+        <div class="resource-card">
+          <h4>Wangu Kanja Foundation</h4>
+          <p>Survivor network and reporting tools for sexual violence cases.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Survivor Guidelines -->
+    <section class="panel" aria-labelledby="guidelines-heading">
+      <h3 id="guidelines-heading">Guidelines for Survivors</h3>
+      <ul>
+        <li>Find a safe place and someone you trust.</li>
+        <li>Seek medical attention immediately — do not shower or change clothes before a medical exam.</li>
+        <li>Preserve evidence (clothing, messages, injuries).</li>
+        <li>Contact a crisis centre or legal aid organization.</li>
+        <li>Document everything you remember about the incident.</li>
+        <li>Reach out to counseling services for emotional support.</li>
+      </ul>
+    </section>
+
+    <!-- Map -->
+    <section class="panel map-panel">
+      <h3>Find Nearby Medical Centres</h3>
+      <div class="map-controls">
+        <button id="use-location-btn" class="btn">Use my location</button>
+        <form id="address-form" class="address-form" autocomplete="off">
+          <label for="address-input">Or enter your location</label>
+          <div class="address-row">
+            <input id="address-input" type="text" placeholder="e.g., Westlands, Nairobi" required />
+            <button type="submit" class="btn">Search</button>
+          </div>
+        </form>
+      </div>
+      <div id="map" style="height: 420px; border-radius: 8px; overflow: hidden;"></div>
+      <div id="results" class="results" aria-live="polite"></div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+      <p class="help-text">You are not alone. Help is available 24/7.</p>
+    </footer>
+  </main>
+
+  <!-- Scripts -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="emergency.js"></script>
+</body>
+</html>
+
+

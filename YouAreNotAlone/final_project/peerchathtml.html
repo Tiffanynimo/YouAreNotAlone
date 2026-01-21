@@ -1,0 +1,265 @@
+<!DOCTYPE html>  
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Support Chatroom</title>
+
+<style>
+    body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #B68597, #DAB6C2, #F2E6EA);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.chat-wrapper {
+    width: 90%;
+    height: 90vh;
+    background: #DAB6C2; /* lighter contrast */
+    border-radius: 20px;
+    display: flex;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.user-list {
+    width: 25%;
+    background: #F2E6EA;
+    padding: 20px;
+    box-sizing: border-box;
+    border-right: 3px solid #B68597; /* main color */
+    overflow-y: auto;
+}
+
+.user-list h2 {
+    color: #B68597; /* main color */
+    margin-bottom: 15px;
+}
+
+.user-item {
+    padding: 12px;
+    background: #C79DAA; /* lighter tone */
+    border-radius: 12px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.user-item:hover {
+    background: #B68597; /* main color */
+    color: white;
+    transform: scale(1.03);
+}
+
+.chat-area {
+    width: 75%;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.messages {
+    flex: 1;
+    overflow-y: auto;
+    background: #F2E6EA;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+}
+
+.bubble {
+    margin: 10px 0;
+    background: #C79DAA; /* lighter tone */
+    padding: 12px 15px;
+    border-radius: 15px;
+    max-width: 70%;
+    position: relative;
+}
+
+.timestamp {
+    display: block;
+    font-size: 0.7rem;
+    color: #6b6b6b;
+    margin-top: 4px;
+    text-align: right;
+}
+
+.input-bar {
+    display: flex;
+    margin-top: 15px;
+}
+
+.input-bar input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    background: #DAB6C2; /* lighter tone */
+    margin-right: 10px;
+}
+
+.input-bar button {
+    background: #B68597; /* main color */
+    border: none;
+    padding: 12px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.input-bar button:hover {
+    background: #9C6C7F; /* slightly darker shade */
+    transform: scale(1.05);
+}
+
+.private-popup {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 280px;
+    background: #F2E6EA;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    display: none;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.private-header {
+    padding: 12px;
+    background: #B68597; /* main color */
+    color: white;
+    border-radius: 15px 15px 0 0;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-btn {
+    cursor: pointer;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.3);
+}
+
+.private-messages {
+    height: 200px;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+.private-input {
+    display: flex;
+    padding: 10px;
+}
+
+.private-input input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 10px;
+    border: none;
+    background: #DAB6C2; /* lighter tone */
+    margin-right: 5px;
+}
+
+.private-input button {
+    padding: 8px 12px;
+    background: #B68597; /* main color */
+    border: none;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="chat-wrapper">
+    <div class="user-list">
+        <h2>Survivors</h2>
+        <div class="user-item" onclick="openPrivateChat('Luna')">Luna</div>
+        <div class="user-item" onclick="openPrivateChat('Amani')">Amani</div>
+        <div class="user-item" onclick="openPrivateChat('Grace')">Grace</div>
+        <div class="user-item" onclick="openPrivateChat('Hope')">Hope</div>
+    </div>
+
+    <div class="chat-area">
+        <div class="messages" id="publicMessages"></div>
+
+        <div class="input-bar">
+            <input id="publicInput" placeholder="Type a message..." />
+            <button onclick="sendPublic()">Send</button>
+        </div>
+    </div>
+</div>
+
+<div class="private-popup" id="privatePopup">
+    <div class="private-header" id="privateUser">
+        Chat
+        <span class="close-btn" onclick="closePrivateChat()">✕</span>
+    </div>
+
+    <div class="private-messages" id="privateMessages"></div>
+
+    <div class="private-input">
+        <input id="privateInput" placeholder="Message..." />
+        <button onclick="sendPrivate()">Send</button>
+    </div>
+</div>
+
+<script>
+    function timestamp() {
+        const now = new Date();
+        return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function sendPublic() {
+        let input = document.getElementById("publicInput");
+        let msg = input.value.trim();
+        if (!msg) return;
+
+        let box = document.createElement("div");
+        box.className = "bubble";
+        box.innerHTML = msg + `<span class="timestamp">${timestamp()}</span>`;
+
+        document.getElementById("publicMessages").appendChild(box);
+        input.value = "";
+    }
+
+    function openPrivateChat(username) {
+        document.getElementById("privateUser").childNodes[0].nodeValue = username;
+        document.getElementById("privateMessages").innerHTML = "";
+        document.getElementById("privatePopup").style.display = "flex";
+    }
+
+    function closePrivateChat() {
+        document.getElementById("privatePopup").style.display = "none";
+    }
+
+    function sendPrivate() {
+        let input = document.getElementById("privateInput");
+        let msg = input.value.trim();
+        if (!msg) return;
+
+        let bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.innerHTML = msg + `<span class="timestamp">${timestamp()}</span>`;
+
+        document.getElementById("privateMessages").appendChild(bubble);
+        input.value = "";
+    }
+</script>
+
+</body>
+</html>

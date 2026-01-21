@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register | You Are Not Alone</title>
+  <link rel="stylesheet" href="auth.css" />
+</head>
+<body class="auth-body">
+
+  <div class="auth-container">
+    <img src="logo.png" alt="Heart Logo" class="auth-logo" />
+    <h1>You Are Not Alone</h1>
+    <p class="subtitle">A safe space for healing and support</p>
+
+  <form id="signupForm">
+  <input id="fullname" type="text" placeholder="Full Name" required />
+
+  <select id="role" required>
+    <option value="" disabled selected>I am a...</option>
+    <option value="survivor">Survivor</option>
+    <option value="medical">Medical Practitioner</option>
+    <option value="therapist">Therapist</option>
+    <option value="legal">Legal Representative</option>
+    <option value="admin">Admin</option>
+  </select>
+
+  <input id="phone" type="tel" placeholder="Phone (Optional)" />
+  <input id="email" type="email" placeholder="Email" required />
+  <input id="password" type="password" placeholder="Password" required />
+
+  <button type="submit">Create Account</button>
+
+  <a href="login.html">
+    <button type="button">Back to Login</button>
+      </a>
+    
+</form>
+
+
+
+    <p class="signup-link">Prefer to stay anonymous? <a href="anonymous.html">Sign up anonymously</a></p>
+    <p class="crisis">Crisis Support: 1-800-656-4673</p>
+  </div>
+
+<script type="module">
+  console.log("Firebase Loaded:", auth, db);
+
+import { auth, db } from "../firebase.js";
+import { createUserWithEmailAndPassword, updateProfile } 
+  from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { setDoc, doc, serverTimestamp } 
+  from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+document.getElementById("signupForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const fullname = document.getElementById("fullname").value;
+  const role = document.getElementById("role").value;
+  const phone = document.getElementById("phone").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCred.user;
+
+    await updateProfile(user, { displayName: fullname });
+
+    await setDoc(doc(db, "users", user.uid), {
+      fullname,
+      role,
+      phone,
+      email,
+      createdAt: serverTimestamp()
+    });
+
+    redirectUser(role);
+
+  } catch (error) {
+    alert("Signup Error: " + error.message);
+  }
+});
+
+function redirectUser(role) {
+  switch (role) {
+    case "survivor":
+      window.location.href = "../auth/verify.html";
+      break;
+    case "medical":
+      window.location.href = "../medical/medical.html";
+      break;
+    case "therapist":
+      window.location.href = "../therapist/therapist.html";
+      break;
+    case "legal":
+      window.location.href = "../legal/legal.html";
+      break;
+    case "admin":
+      window.location.href = "../admin/admin.html";
+      break;
+    default:
+      alert("Invalid role.");
+  }
+}
+console.log("Register script running.");
+
+</script>
+
+
+</body>
+</html>
+
+
+

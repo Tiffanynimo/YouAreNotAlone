@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>You Are Not Alone — Legal Dashboard</title>
+  <link rel="stylesheet" href="legal.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <div class="left">
+      <img src="logo.png" alt="logo" class="logo" />
+      <div class="title">
+        <h1>You Are Not Alone</h1>
+        <p>Legal Representative</p>
+      </div>
+    </div>
+
+    <div class="center">
+      <span class="crisis-label">Crisis: 1-800-656-4673</span>
+    </div>
+
+    <div class="right">
+      <div class="user-info">
+        <p class="user-name">Rose Kiiru</p>
+        <p class="user-email">rosekiiru@gmail.com</p>
+      </div>
+      <button class="signout-btn">Sign Out</button>
+    </div>
+  </nav>
+
+  <!-- Layout: Sidebar + Main -->
+  <div class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <a href="#" class="sidebar-item active"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+        <a href="#" class="sidebar-item"><i class="fa-solid fa-briefcase"></i><span>Cases</span></a>
+        <a href="#" class="sidebar-item"><i class="fa-solid fa-calendar-days"></i><span>Consultations</span></a>
+        <a href="#" class="sidebar-item"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+      </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main">
+      <header class="page-header">
+        <h2 class="page-title">Legal Dashboard</h2>
+      </header>
+
+      <!-- Stat cards -->
+      <section class="stats">
+        <article class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-folder-open"></i></div>
+          <div class="stat-body">
+            <div class="stat-value">0</div>
+            <div class="stat-label">Total Cases</div>
+          </div>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-gavel"></i></div>
+          <div class="stat-body">
+            <div class="stat-value">0</div>
+            <div class="stat-label">Active Cases</div>
+          </div>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-comments"></i></div>
+          <div class="stat-body">
+            <div class="stat-value">0</div>
+            <div class="stat-label">Consultations</div>
+          </div>
+        </article>
+      </section>
+
+      <!-- Active Cases panel -->
+      <section class="panel">
+        <div class="panel-header">
+          <h3>Active Cases</h3>
+        </div>
+        <div class="panel-body empty">
+          <div class="empty-icon"><i class="fa-regular fa-folder-open"></i></div>
+          <p class="empty-text">No cases assigned.</p>
+        </div>
+      </section>
+
+      <!-- Legal Best Practices and Case Management side-by-side -->
+      <section class="guidelines-grid">
+        <div class="guideline-card guideline-yellow">
+          <h4>Legal Best Practices</h4>
+          <ul>
+            <li>Ensure client confidentiality at all times</li>
+            <li>Provide clear explanation of legal options</li>
+            <li>Document all case details thoroughly</li>
+            <li>Coordinate with medical and therapy teams</li>
+          </ul>
+        </div>
+
+        <div class="guideline-card guideline-blue">
+          <h4>Case Management</h4>
+          <ul>
+            <li>Keep detailed records of all proceedings</li>
+            <li>Update case status regularly</li>
+            <li>Provide timely updates to clients</li>
+            <li>Maintain professional boundaries</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Footer message -->
+      <footer class="dashboard-footer">
+        <p class="help-text">You are not alone. Help is available 24/7.</p>
+      </footer>
+    </main>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,81 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default: deny all access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Users collection - users can read/write their own profile, read others for role verification
+    match /users/{userId} {
+      allow read: if request.auth.uid != null;
+      allow write: if request.auth.uid == userId;
+    }
+
+    // Activity logs - any authenticated user can write; admins read all, others read own only
+    match /activityLogs/{logId} {
+      allow create: if request.auth.uid != null;
+      allow read: if request.auth.uid != null && (
+        // Admin can read all activity logs
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+        // Non-admin users can only read their own logs
+        || request.auth.uid == resource.data.userId
+      );
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    // Resources - all authenticated users can read
+    match /resources/{document=**} {
+      allow read: if request.auth.uid != null;
+      allow write: if false;
+    }
+
+    // Reports - survivors create/read/write their own; admins can read all
+    match /reports/{reportId} {
+      allow create: if request.auth.uid != null && request.resource.data.survivorId == request.auth.uid;
+      allow read: if request.auth.uid != null && (
+        // Survivor can read their own reports
+        request.auth.uid == resource.data.survivorId
+        // Admin can read all reports
+        || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
+      allow write: if request.auth.uid == resource.data.survivorId;
+      allow delete: if request.auth.uid == resource.data.survivorId;
+    }
+
+    // Appointments collection - simplified, client-side filtering enforces access control
+    match /appointments/{appointmentId} {
+      // Survivors create appointments for themselves
+      allow create: if request.auth.uid != null
+        && request.resource.data.survivorId == request.auth.uid
+        && request.resource.data.professionalType in ['therapist','medical','legal']
+        && request.resource.data.status == 'pending';
+
+      // Any authenticated user can read (client filters by role/assignment)
+      allow read: if request.auth.uid != null;
+
+      // Update: survivors cancel pending, professionals approve/decline/update appointments
+      allow update: if request.auth.uid != null && (
+        // Survivor cancels their pending appointment
+        (request.auth.uid == resource.data.survivorId && resource.data.status == 'pending' && request.resource.data.status == 'cancelled')
+        // Professional approves pending appointment (pending → scheduled, assigns to self)
+        || (resource.data.status == 'pending' && request.resource.data.status == 'scheduled')
+        // Professional declines pending appointment (pending → cancelled, must be unassigned or empty)
+        || (resource.data.status == 'pending' && request.resource.data.status == 'cancelled' && (!resource.data.assignedTo || resource.data.assignedTo == ''))
+        // Professional updates appointment they are assigned to
+        || (request.auth.uid == resource.data.assignedTo && request.resource.data.status in ['scheduled','completed','cancelled'])
+      );
+
+      allow delete: if false;
+    }
+
+    // Notifications collection - only owner may read/update/delete; professionals can create
+    match /notifications/{notificationId} {
+      allow create: if request.auth.uid != null; // professionals create notifications for survivors
+      allow read: if request.auth.uid == resource.data.userId;
+      allow update: if request.auth.uid == resource.data.userId;
+      allow delete: if request.auth.uid == resource.data.userId;
+    }
+  }
+}

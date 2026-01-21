@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medical Dashboard</title>
+
+  <!-- App CSS -->
+  <link rel="stylesheet" href="medical.css" />
+
+  <!-- Font Awesome (icons for sidebar and stat cards) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <div class="left">
+      <img src="logo.png" alt="logo" class="logo">
+      <div class="title">
+        <h1>You Are Not Alone</h1>
+        <p>Medical Practitioner</p>
+      </div>
+    </div>
+
+    <div class="center">
+      <span class="crisis-label">Crisis: 1-800-656-4673</span>
+    </div>
+
+    <div class="right">
+      <div class="user-info">
+        <p class="user-name">Joan Wakiri</p>
+        <p class="user-email">joanw11@gmail.com</p>
+      </div>
+      <button class="signout-btn">Sign Out</button>
+    </div>
+  </nav>
+
+  <!-- Layout: Sidebar + Main -->
+  <div class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <a href="#" class="sidebar-item active"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+        <a href="#" class="sidebar-item"><i class="fa-solid fa-calendar-days"></i><span>Appointments</span></a>
+        <a href="#" class="sidebar-item"><i class="fa-solid fa-file-lines"></i><span>Sessions</span></a>
+        <a href="#" class="sidebar-item"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+      </nav>
+    </aside>
+
+    <!-- Main Dashboard -->
+    <section class="dashboard-container">
+
+      <h1 class="dashboard-title">Medical Dashboard</h1>
+
+      <!-- Stats -->
+      <div class="stats-container">
+        <div class="stat-card">
+          <div class="icon"><i class="fa-solid fa-calendar-days"></i></div>
+          <h2>0</h2>
+          <p>Total Appointments</p>
+        </div>
+
+        <div class="stat-card">
+          <div class="icon"><i class="fa-solid fa-clock"></i></div>
+          <h2>0</h2>
+          <p>Scheduled</p>
+        </div>
+
+        <div class="stat-card">
+          <div class="icon"><i class="fa-solid fa-check-circle"></i></div>
+          <h2>0</h2>
+          <p>Completed</p>
+        </div>
+      </div>
+
+      <!-- Appointments Section -->
+      <div class="appointments-section">
+        <h3>Patient Appointments</h3>
+        <div class="appointments-box">
+          <p class="no-appointments">No appointments scheduled</p>
+        </div>
+      </div>
+
+      <!-- Sessions Section (right before guidelines) -->
+      <div class="sessions-section">
+        <h3>Sessions</h3>
+        <div class="sessions-box">
+          <p class="no-sessions">No sessions recorded</p>
+        </div>
+      </div>
+
+      <!-- Patient Care Guidelines Section -->
+      <div class="guidelines-section">
+        <h3>Patient Care Guidelines</h3>
+        <div class="guidelines-box">
+          <ul class="guidelines-list">
+            <li>Always ensure patient comfort and consent before examinations</li>
+            <li>Document all findings thoroughly and sensitively</li>
+            <li>Maintain strict confidentiality of patient information</li>
+            <li>Coordinate with therapy and legal teams when appropriate</li>
+          </ul>
+        </div>
+      </div>
+
+    </section>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>You Are Not Alone — Your Safe Space</title>
+
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="anony.css" />
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav" role="banner">
+    <div class="left">
+      <img src="logo.png" alt="You Are Not Alone logo" class="logo" />
+      <div class="title">
+        <h1>You Are Not Alone</h1>
+        <p>Safe Space</p>
+      </div>
+    </div>
+
+    <div class="center">
+      <span class="crisis-label">Crisis 24/7 • 1-800-656-4673</span>
+    </div>
+
+    <div class="right">
+      <div class="user-info">
+        <p class="user-name" id="user-name">Anonymous</p>
+        <p class="user-email" id="user-email">Signed in anonymously</p>
+      </div>
+      <button class="signout-btn" id="signout-btn">Sign Out</button>
+    </div>
+  </nav>
+
+  <!-- Layout: Sidebar + Main -->
+  <div class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" aria-label="Primary navigation">
+      <nav class="sidebar-nav">
+        <a href="#dashboard" class="sidebar-item active" data-section="dashboard"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+        <a href="#resources" class="sidebar-item" data-section="resources"><i class="fa-solid fa-book"></i><span>Support Resources</span></a>
+        <a href="#directory" class="sidebar-item" data-section="directory"><i class="fa-solid fa-user-md"></i><span>Practitioners</span></a>
+        <a href="#map" class="sidebar-item" data-section="map"><i class="fa-solid fa-map-location-dot"></i><span>Find Care</span></a>
+        <a href="#request" class="sidebar-item" data-section="request"><i class="fa-solid fa-paper-plane"></i><span>Request Support</span></a>
+        <a href="#profile" class="sidebar-item" data-section="profile"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="panic-btn" id="panic-btn" title="Quick exit">Panic Exit</button>
+      </div>
+    </aside>
+
+    <!-- Main Dashboard -->
+    <main class="main" role="main">
+      
+      <!-- DASHBOARD SECTION -->
+      <section id="dashboard-section" class="main-section active">
+        <header class="hero">
+          <h2 class="hero-title">Your Safe Space</h2>
+          <p class="hero-sub">
+            Welcome. This space is designed to give you immediate, private access to support resources.
+            You can view helplines, find nearby medical centres, and contact trusted practitioners externally.
+          </p>
+          <p class="hero-help">
+            If you need immediate help call the 24/7 National Sexual Assault Hotline at 
+            <strong>1-800-656-4673</strong>
+          </p>
+        </header>
+
+        <!-- Quick stats -->
+        <section class="stats" aria-label="Quick statistics">
+          <article class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-calendar-days"></i></div>
+            <div class="stat-body">
+              <div class="stat-value" id="upcoming-count">0</div>
+              <div class="stat-label">Upcoming Appointments</div>
+            </div>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-flag"></i></div>
+            <div class="stat-body">
+              <div class="stat-value" id="reports-count">0</div>
+              <div class="stat-label">Reports Submitted</div>
+            </div>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-book"></i></div>
+            <div class="stat-body">
+              <div class="stat-value" id="resources-count">0</div>
+              <div class="stat-label">Support Resources</div>
+            </div>
+          </article>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="panel quick-actions" aria-labelledby="quick-actions-heading">
+          <h3 id="quick-actions-heading">Quick Actions</h3>
+          <div class="action-buttons">
+            <button class="action-btn" data-section="report"><i class="fa-solid fa-flag"></i> Report Incident</button>
+            <button class="action-btn" data-section="resources"><i class="fa-solid fa-book"></i> View Resources</button>
+            <button class="action-btn" data-section="appointments"><i class="fa-solid fa-calendar-days"></i> View Appointments</button>
+            <button class="action-btn" data-section="directory"><i class="fa-solid fa-user-md"></i> Practitioners</button>
+            <button class="action-btn" data-section="request"><i class="fa-solid fa-paper-plane"></i> Request Support</button>
+          </div>
+        </section>
+
+        <!-- Support Contacts -->
+        <section class="panel support-contacts" aria-labelledby="support-contacts-heading">
+          <h3 id="support-contacts-heading">Support Contacts</h3>
+          <div class="contacts-grid">
+            <div class="contact-card">
+              <h4><i class="fa-solid fa-phone"></i> National Sexual Assault Hotline</h4>
+              <p><strong id="hotline-number">1-800-656-4673 (HOPE)</strong></p>
+              <div class="contact-actions">
+                <button class="copy-btn" data-copy="1-800-656-4673">Copy</button>
+                <a class="call-link" href="tel:18006564673">Call</a>
+              </div>
+              <p class="muted">Available 24/7</p>
+            </div>
+
+            <div class="contact-card">
+              <h4><i class="fa-solid fa-phone"></i> Usikimye GBV Helpline</h4>
+              <p><strong id="usikimye-number">0800 000 999</strong></p>
+              <div class="contact-actions">
+                <button class="copy-btn" data-copy="0800000999">Copy</button>
+                <a class="call-link" href="tel:0800000999">Call</a>
+              </div>
+              <p class="muted">Confidential support</p>
+            </div>
+
+            <div class="contact-card">
+              <h4><i class="fa-solid fa-children"></i></h4>
+              <p><strong id="child-number">116</strong></p>
+              <div class="contact-actions">
+                <button class="copy-btn" data-copy="116">Copy</button>
+                <a class="call-link" href="tel:116">Call</a>
+              </div>
+              <p class="muted">Free and confidential</p>
+            </div>
+          </div>
+        </section>
+
+      </section>
+
+      <!-- RESOURCES SECTION -->
+      <section id="resources-section" class="main-section" hidden>
+        <section class="panel" aria-labelledby="resources-heading">
+          <h3 id="resources-heading">Support Resources</h3>
+          <div class="resources-grid">
+            <div class="resource-card">
+              <h4>What to do immediately</h4>
+              <p>Find a safe place, preserve evidence, seek medical attention, and contact a trusted support line.</p>
+              <a class="resource-link" href="../Project3/final_project_demo-main/final_project_demo-main/final_project/Articles/articles.html" role="button">Read guidelines</a>
+            </div>
+
+            <div class="resource-card">
+              <h4>Legal Aid</h4>
+              <p>List of trusted legal representatives and advocacy organisations. External contact only.</p>
+              <a class="resource-link" href="#directory">View legal reps</a>
+            </div>
+
+            <div class="resource-card">
+              <h4>Counseling & Therapy</h4>
+              <p>Trauma-informed therapists and counseling services. Contact externally via phone or WhatsApp.</p>
+              <a class="resource-link" href="#directory">View therapists</a>
+            </div>
+
+            <div class="resource-card">
+              <h4>Emergency Medical Care</h4>
+              <p>Hospitals, GBV recovery centres, and ambulance services. Use the map to find nearby facilities.</p>
+              <a class="resource-link" href="#map">Open map</a>
+            </div>
+          </div>
+        </section>
+
+        <!-- Guidelines -->
+        <section class="panel" id="guidelines" aria-labelledby="guidelines-heading">
+          <h3 id="guidelines-heading">Guidelines for survivors</h3>
+          <ul class="guidelines-list">
+            <li>Find a safe place and someone you trust.</li>
+            <li>Seek medical attention immediately — avoid showering or changing clothes before a medical exam.</li>
+            <li>Preserve evidence (clothing, messages, injuries).</li>
+            <li>Contact a crisis centre or legal aid organization.</li>
+            <li>Document everything you remember about the incident.</li>
+            <li>Reach out to counseling services for emotional support.</li>
+          </ul>
+        </section>
+      </section>
+
+      <!-- PRACTITIONER DIRECTORY -->
+      <section id="directory-section" class="main-section" hidden>
+        <section class="panel" aria-labelledby="directory-heading">
+          <h3 id="directory-heading">Practitioners & Legal Representatives</h3>
+          <p class="muted">Contact details are provided for external outreach only. No in-app messaging is stored.</p>
+
+          <!-- Directory filters -->
+          <div class="directory-controls">
+            <label for="dir-filter">Filter</label>
+            <select id="dir-filter">
+              <option value="all">All</option>
+              <option value="medical">Medical</option>
+              <option value="therapy">Therapy</option>
+              <option value="legal">Legal</option>
+            </select>
+          </div>
+
+          <div class="directory-grid" id="directory-grid">
+            <!-- Example card (replace with dynamic content) -->
+            <div class="directory-card" data-type="therapy">
+              <div class="directory-head">
+                <h4>Dr. Amina — Trauma Counselor</h4>
+                <span class="role">Therapist</span>
+              </div>
+              <p class="muted">Trauma-informed counseling; external booking available.</p>
+              <div class="directory-actions">
+                <button class="copy-btn" data-copy="+254719638006">Copy Phone</button>
+                <a class="external-link" href="https://wa.me/254719638006" target="_blank" rel="noopener">WhatsApp</a>
+                <a class="external-link" href="https://example.com/booking" target="_blank" rel="noopener">Booking Form</a>
+              </div>
+            </div>
+
+            <div class="directory-card" data-type="legal">
+              <div class="directory-head">
+                <h4>FIDA Kenya — Legal Aid</h4>
+                <span class="role">Legal Representative</span>
+              </div>
+              <p class="muted">Free legal support for survivors; external contact only.</p>
+              <div class="directory-actions">
+                <button class="copy-btn" data-copy="+254722509760">Copy Phone</button>
+                <a class="external-link" href="https://wa.me/254722509760" target="_blank" rel="noopener">WhatsApp</a>
+                <a class="external-link" href="https://example.com/legal-form" target="_blank" rel="noopener">Request Help</a>
+              </div>
+            </div>
+
+            <div class="directory-card" data-type="medical">
+              <div class="directory-head">
+                <h4>GBV Recovery Centre — Hospital</h4>
+                <span class="role">Medical</span>
+              </div>
+              <p class="muted">Forensic exams, emergency care, and counseling referrals.</p>
+              <div class="directory-actions">
+                <button class="copy-btn" data-copy="+254709667000">Copy Phone</button>
+                <a class="external-link" href="tel:+254709667000">Call</a>
+                <a class="external-link" href="https://example.com/medical-form" target="_blank" rel="noopener">Intake Form</a>
+              </div>
+            </div>
+
+          </div>
+        </section>
+      </section>
+
+      <!-- MAP SECTION -->
+      <section id="map-section" class="main-section" hidden>
+        <section class="panel" aria-labelledby="map-heading">
+          <h3 id="map-heading">Find nearby medical centres</h3>
+
+          <div class="map-controls">
+            <button id="use-location-btn" class="btn">Use my location</button>
+            <form id="address-form" class="address-form" autocomplete="off">
+              <label for="address-input">Or enter your location</label>
+              <div class="address-row">
+                <input id="address-input" type="text" placeholder="e.g., Kitengela, Nairobi" />
+                <button type="submit" class="btn">Search</button>
+              </div>
+            </form>
+          </div>
+
+          <div id="map" style="height: 420px; border-radius: 8px; overflow: hidden;"></div>
+          <div id="results" class="results" aria-live="polite"></div>
+        </section>
+      </section>
+
+      <!-- REQUEST SUPPORT FORM (external submission recommended) -->
+      <section id="request-section" class="main-section" hidden>
+        <section class="panel" aria-labelledby="request-heading">
+          <h3 id="request-heading">Request Support (External Form)</h3>
+          <p class="muted">This form opens an external, secure intake form. We recommend using a private browser if you are concerned about privacy.</p>
+
+          <form class="request-form" action="https://example.com/external-intake" method="POST" target="_blank" rel="noopener">
+            <label for="nickname">Nickname (optional)</label>
+            <input id="nickname" name="nickname" type="text" placeholder="Nickname (optional)" />
+
+            <label for="support-type">Type of support</label>
+            <select id="support-type" name="supportType" required>
+              <option value="medical">Medical</option>
+              <option value="therapy">Therapy</option>
+              <option value="legal">Legal</option>
+            </select>
+
+            <label for="contact-method">Preferred contact method</label>
+            <select id="contact-method" name="contactMethod" required>
+              <option value="whatsapp">WhatsApp</option>
+              <option value="phone">Phone</option>
+              <option value="email">Email</option>
+            </select>
+
+            <label for="notes">Notes (optional)</label>
+            <textarea id="notes" name="notes" rows="4" placeholder="Briefly describe what you need"></textarea>
+
+            <label class="consent">
+              <input type="checkbox" name="consent" required />
+              I consent to be contacted by the selected provider.
+            </label>
+
+            <div class="form-actions">
+              <button type="submit" class="btn primary">Open Secure Form</button>
+              <button type="button" class="btn" id="clear-form">Clear</button>
+            </div>
+          </form>
+        </section>
+      </section>
+
+      <!-- NOTIFICATIONS SECTION -->
+      <section id="notifications-section" class="main-section">
+        <h2>Notifications</h2>
+        <div class="panel">
+          <div class="notification-filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="unread">Unread</button>
+            <button class="filter-btn" data-filter="appointment">Appointment Updates</button>
+          </div>
+          <div id="notifications-list" class="notifications-list">
+            <p class="empty-state">No notifications yet. Your appointment updates will appear here.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROFILE SECTION -->
+      <section id="profile-section" class="main-section">
+        <h2>My Profile</h2>
+        <div class="panel profile-panel">
+          <form id="profile-form" class="profile-form">
+            <div class="form-group">
+              <label for="profile-fullname">Full Name</label>
+              <input type="text" id="profile-fullname" placeholder="Enter your full name">
+            </div>
+
+            <div class="form-group">
+              <label for="profile-email">Email</label>
+              <input type="email" id="profile-email" placeholder="Enter your email" disabled>
+            </div>
+
+            <div class="form-group">
+              <label for="profile-phone">Phone Number</label>
+              <input type="tel" id="profile-phone" placeholder="Enter your phone number">
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn primary">Save Changes</button>
+              <button type="button" class="btn" id="cancel-edit">Cancel</button>
+            </div>
+          </form>
+          <div id="profile-message" class="message" style="display: none;"></div>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="dashboard-footer">
+        <p class="help-text">You are not alone. Help is available 24/7.</p>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+   <script src="anony.js"></script>
+
+</body>
+</html>

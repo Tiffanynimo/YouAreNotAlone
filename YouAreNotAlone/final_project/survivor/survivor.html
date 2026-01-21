@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>You Are Not Alone — Your Safe Space</title>
+
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="survivor.css" />
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav" role="banner">
+    <div class="left">
+      <img src="logo.png" alt="You Are Not Alone logo" class="logo" />
+      <div class="title">
+        <h1>You Are Not Alone</h1>
+        <p>Safe Space</p>
+      </div>
+    </div>
+
+    <div class="center">
+      <span class="crisis-label">Crisis 24/7 1-800-656-4673</span>
+    </div>
+
+    <div class="right">
+      <div class="user-info">
+        <p class="user-name">Sharon Wambui</p>
+        <p class="user-email">wambuisharon526@gmail.com</p>
+      </div>
+      <button class="signout-btn">Sign Out</button>
+    </div>
+  </nav>
+
+  <!-- Layout: Sidebar + Main -->
+  <div class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" aria-label="Primary navigation">
+      <nav class="sidebar-nav">
+        <a href="#" class="sidebar-item active"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+        <a href="#" class="sidebar-item"><i class="fa-solid fa-calendar-days"></i><span>Appointments</span></a>
+        <a href="#" class="sidebar-item"><i class="fa-solid fa-briefcase"></i><span>My Cases</span></a>
+        <a href="#" class="sidebar-item"><i class="fa-solid fa-book"></i><span>Support Resources</span></a>
+        <a href="#" class="sidebar-item"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+      </nav>
+    </aside>
+
+    <!-- Main Dashboard -->
+    <main class="main" role="main">
+      <header class="hero">
+        <h2 class="hero-title">Your Safe Space</h2>
+        <p class="hero-sub">
+          Welcome to Your Safe Space. You are brave, you are strong, and you are not alone.
+          This is a judgment-free space designed to support you on your healing journey.
+        </p>
+        <p class="hero-help">If you need immediate help call the 24/7 National Sexual Assault Hotline at <strong>1-800-656-4673</strong></p>
+      </header>
+
+      <!-- Quick stats -->
+      <section class="stats">
+        <article class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-calendar-days"></i></div>
+          <div class="stat-body">
+            <div class="stat-value">0</div>
+            <div class="stat-label">Upcoming Appointments</div>
+          </div>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-briefcase"></i></div>
+          <div class="stat-body">
+            <div class="stat-value">0</div>
+            <div class="stat-label">My Cases</div>
+          </div>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-book"></i></div>
+          <div class="stat-body">
+            <div class="stat-value">—</div>
+            <div class="stat-label">Support Resources</div>
+          </div>
+        </article>
+      </section>
+
+      <!-- Upcoming Appointments -->
+      <section class="panel appointments-panel" aria-labelledby="upcoming-heading">
+        <h3 id="upcoming-heading">Upcoming Appointments</h3>
+        <div class="panel-body">
+          <p class="empty-note">No upcoming appointments scheduled</p>
+        </div>
+      </section>
+
+      <!-- My Cases -->
+      <section class="panel cases-panel" aria-labelledby="cases-heading">
+        <h3 id="cases-heading">My Cases</h3>
+        <div class="panel-body">
+          <p class="empty-note">No cases on file</p>
+        </div>
+      </section>
+
+      <!-- Support Resources -->
+      <section class="panel resources-panel" aria-labelledby="resources-heading">
+        <h3 id="resources-heading">Support Resources</h3>
+        <div class="resources-grid">
+          <div class="resource-card">
+            <h4>Helplines</h4>
+            <p>24/7 crisis hotline and local support numbers</p>
+          </div>
+          <div class="resource-card">
+            <h4>Counseling</h4>
+            <p>Information on counseling options and how to book</p>
+          </div>
+          <div class="resource-card">
+            <h4>Legal Help</h4>
+            <p>Guidance on legal options and referrals</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="dashboard-footer">
+        <p class="help-text">You are not alone. Help is available 24/7.</p>
+      </footer>
+    </main>
+  </div>
+
+</body>
+</html>

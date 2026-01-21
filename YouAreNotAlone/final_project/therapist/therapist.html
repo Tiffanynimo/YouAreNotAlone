@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>You Are Not Alone — Therapist Dashboard</title>
+
+  <!-- Page stylesheet -->
+  <link rel="stylesheet" href="therapist.css" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav" role="banner">
+    <div class="left">
+      <img src="logo.png" alt="logo" class="logo" />
+      <div class="title">
+        <h1>You Are Not Alone</h1>
+        <p>Therapist</p>
+      </div>
+    </div>
+
+    <div class="center">
+      <span class="crisis-label">Crisis 24/7 1-800-656-4673</span>
+    </div>
+
+    <div class="right">
+      <div class="user-info">
+        <p class="user-name">Therapist Name</p>
+        <p class="user-email">therapist@example.com</p>
+      </div>
+      <button class="signout-btn">Sign Out</button>
+    </div>
+  </nav>
+
+  <!-- Layout: Sidebar + Main -->
+  <div class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" aria-label="Primary navigation">
+      <nav class="sidebar-nav">
+        <a href="#" class="sidebar-item active"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+        <a href="#patients" class="sidebar-item"><i class="fa-solid fa-users"></i><span>Patients</span></a>
+        <a href="#sessions" class="sidebar-item"><i class="fa-solid fa-calendar-days"></i><span>Sessions</span></a>
+        <a href="#notes" class="sidebar-item"><i class="fa-solid fa-file-lines"></i><span>Notes</span></a>
+        <a href="#profile" class="sidebar-item"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+      </nav>
+    </aside>
+
+    <!-- Main Dashboard -->
+    <main class="main" role="main">
+      <h1 class="dashboard-title">Therapist Dashboard</h1>
+
+      <!-- Quick stats -->
+      <section class="stats">
+        <article class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-calendar-days"></i></div>
+          <div class="stat-body">
+            <div class="stat-value">0</div>
+            <div class="stat-label">Upcoming Sessions</div>
+          </div>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+          <div class="stat-body">
+            <div class="stat-value">0</div>
+            <div class="stat-label">Active Patients</div>
+          </div>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-file-medical"></i></div>
+          <div class="stat-body">
+            <div class="stat-value">0</div>
+            <div class="stat-label">Notes Today</div>
+          </div>
+        </article>
+      </section>
+
+      <!-- Patients panel -->
+      <section id="patients" class="panel">
+        <h3>Patients</h3>
+        <div class="panel-body">
+          <div class="panel-controls">
+            <input type="search" placeholder="Search patients..." />
+            <button class="btn">+ Add Patient</button>
+          </div>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Contact</th>
+                <th>Last Session</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="empty-row">
+                <td colspan="4" class="empty-note">No patients added yet</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Sessions panel -->
+      <section id="sessions" class="panel">
+        <h3>Sessions</h3>
+        <div class="panel-body">
+          <div class="panel-controls">
+            <select>
+              <option>All</option>
+              <option>Upcoming</option>
+              <option>Completed</option>
+            </select>
+            <button class="btn">+ New Session</button>
+          </div>
+
+          <ul class="session-list">
+            <li class="empty-note">No sessions scheduled</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Notes panel -->
+      <section id="notes" class="panel">
+        <h3>Notes</h3>
+        <div class="panel-body">
+          <form class="note-form">
+            <label for="notePatient">Patient</label>
+            <input id="notePatient" type="text" placeholder="Patient name" />
+
+            <label for="noteText">Note</label>
+            <textarea id="noteText" rows="4" placeholder="Write session notes..."></textarea>
+
+            <div class="form-actions">
+              <button type="submit" class="btn primary">Save Note</button>
+              <button type="button" class="btn">Clear</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="dashboard-footer">
+        <p class="help-text">You are not alone. Help is available 24/7.</p>
+      </footer>
+    </main>
+  </div>
+
+</body>
+</html>

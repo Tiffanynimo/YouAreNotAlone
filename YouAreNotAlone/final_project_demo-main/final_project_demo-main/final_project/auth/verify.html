@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Verification Page</title>
+  <link rel="stylesheet" href="auth.css">
+</head>
+
+    <body class="auth-body">
+    <div class="auth-container">
+    <img src="logo.png" alt="Heart Logo" class="auth-logo" />
+    <h1>You Are Not Alone</h1>
+    <p class="subtitle">A safe space for healing and support</p>
+
+    <form id="verifyForm">
+    <input type="text" id="caseId" placeholder="Enter Case ID" />
+    <input type="text" id="survivorId" placeholder="Enter Survivor ID" />
+    <button id="verify-btn">Verify</button>
+    <p id="verify-message"></p>
+    </form>
+
+
+    <script type="module" src="../auth/verify.js"></script>
+</body>
+</html>

@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>You Are Not Alone — Medical Dashboard</title>
+  <link rel="stylesheet" href="medical.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <nav class="top-nav">
+    <div class="left">
+      <img src="logo.png" alt="logo" class="logo">
+      <div class="title">
+        <h1>You Are Not Alone</h1>
+        <p>Medical Practitioner</p>
+      </div>
+    </div>
+
+    <div class="center">
+      <span class="crisis-label">Crisis: 1-800-656-4673</span>
+    </div>
+
+    <div class="right">
+      <div class="user-info">
+       <p class="user-name">Loading...</p>
+       <p class="user-email">Loading...</p>
+      </div>
+      <button class="signout-btn">Sign Out</button>
+    </div>
+  </nav>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <a href="#dashboard" class="sidebar-item active" data-section="dashboard"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+        <a href="#appointments" class="sidebar-item" data-section="appointments"><i class="fa-solid fa-calendar-days"></i><span>Appointments</span></a>
+        <a href="#sessions" class="sidebar-item" data-section="sessions"><i class="fa-solid fa-file-lines"></i><span>Sessions</span></a>
+        <a href="#messages" class="sidebar-item" data-section="messages"><i class="fa-solid fa-comments"></i><span>Messages</span></a>
+        <a href="#profile" class="sidebar-item" data-section="profile"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+      </nav>
+    </aside>
+
+    <section class="dashboard-container">
+      <h1 class="dashboard-title">Medical Dashboard</h1>
+
+      <!-- Dashboard Section -->
+      <div id="dashboard" class="section active">
+        <div class="stats-container">
+          <div class="stat-card">
+            <div class="icon"><i class="fa-solid fa-calendar-days"></i></div>
+            <h2 id="total-appointments">0</h2>
+            <p>Total Appointments</p>
+          </div>
+          <div class="stat-card">
+            <div class="icon"><i class="fa-solid fa-clock"></i></div>
+            <h2 id="scheduled-count">0</h2>
+            <p>Scheduled</p>
+          </div>
+          <div class="stat-card">
+            <div class="icon"><i class="fa-solid fa-check-circle"></i></div>
+            <h2 id="completed-count">0</h2>
+            <p>Completed</p>
+          </div>
+        </div>
+
+        <div class="guidelines-section">
+          <h3>Patient Care Guidelines</h3>
+          <div class="guidelines-box">
+            <ul class="guidelines-list">
+              <li>Always ensure patient comfort and consent before examinations</li>
+              <li>Document all findings thoroughly and sensitively</li>
+              <li>Maintain strict confidentiality of patient information</li>
+              <li>Coordinate with therapy and legal teams when appropriate</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appointments Section -->
+      <div id="appointments" class="section">
+        <h2>Patient Appointments</h2>
+        <div class="appointments-box">
+          <div class="appointments-controls">
+            <select id="medical-appointment-filter">
+              <option value="">All</option>
+              <option value="pending">Pending</option>
+              <option value="scheduled">Scheduled</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <ul id="medical-appointments-list" class="appointments-list">
+            <li class="empty-note">Loading appointments...</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Sessions Section -->
+      <div id="sessions" class="section">
+        <h2>Sessions</h2>
+        <div class="sessions-box">
+          <p class="no-sessions">No sessions recorded</p>
+        </div>
+      </div>
+
+      <!-- Messages Section -->
+      <div id="messages" class="section">
+        <h2>Messages</h2>
+        <div class="panel-body">
+          <div class="chat-container">
+            <!-- Chat Sidebar -->
+            <div class="chat-sidebar">
+              <div class="chat-list-header">
+                <h4>Chats</h4>
+                <input type="text" id="search-chats" class="search-chats" placeholder="Search chats...">
+              </div>
+              
+              <div class="chat-list" id="chat-list">
+                <!-- Chat items will be loaded here by JavaScript -->
+                <div class="empty-chat-state">Loading chats...</div>
+              </div>
+              
+              <div class="start-new-chat">
+                <select id="new-chat-select" class="new-chat-select">
+                  <option value="" disabled selected>Start new chat...</option>
+                </select>
+              </div>
+            </div>
+            
+            <!-- Chat Main Area -->
+            <div class="chat-main">
+              <!-- Initial empty state -->
+              <div class="empty-chat" id="empty-chat-state">
+                <i class="fa-solid fa-comment-dots"></i>
+                <h4>Select a chat to start messaging</h4>
+                <p>Choose a user from the list to begin your conversation</p>
+              </div>
+              
+              <!-- Chat Header (hidden by default) -->
+              <div class="chat-header" id="chat-header" style="display: none;">
+                <div class="chat-recipient">
+                  <div class="chat-recipient-avatar" id="recipient-avatar">U</div>
+                  <div>
+                    <h4 id="recipient-name">User Name</h4>
+                    <small id="recipient-status">Online</small>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Messages Container (hidden by default) -->
+              <div class="chat-messages" id="chat-messages" style="display: none;">
+                <!-- Messages will be loaded here -->
+              </div>
+              
+              <!-- Input Area (hidden by default) -->
+              <div class="chat-input-area" id="chat-input-area" style="display: none;">
+                <textarea id="chat-message-input" placeholder="Type your message..." rows="1"></textarea>
+                <button id="send-message-btn" disabled>Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Section -->
+      <div id="profile" class="section">
+        <h2>My Profile</h2>
+        <div class="profile-box">
+          <form class="profile-form">
+            <div class="form-group">
+              <label for="profile-name">Full Name</label>
+              <input type="text" id="profile-name" placeholder="Full name" disabled />
+            </div>
+            <div class="form-group">
+              <label for="profile-email">Email</label>
+              <input type="email" id="profile-email" placeholder="Email" disabled />
+            </div>
+            <div class="form-group">
+              <label for="profile-phone">Phone</label>
+              <input type="tel" id="profile-phone" placeholder="Phone number" />
+            </div>
+            <div class="form-group">
+              <label for="profile-bio">Professional Bio</label>
+              <textarea id="profile-bio" placeholder="Your professional bio..." rows="4"></textarea>
+            </div>
+            <button type="submit" class="btn primary">Save Changes</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </div>
+
+<script type="module">
+import { auth, db } from "../firebase.js";
+import { logActivity } from "../utils.js";
+import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { getDoc, doc, collection, onSnapshot, query, where, updateDoc, runTransaction, addDoc, serverTimestamp, getDocs, setDoc, orderBy } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+const userNameEl = document.querySelector(".user-name");
+const userEmailEl = document.querySelector(".user-email");
+userNameEl.textContent = "Loading...";
+userEmailEl.textContent = "Loading...";
+
+const allowedRoles = ["medical"];
+let currentUser = null;
+let currentUserData = null;
+
+async function loadUser(user) {
+  try {
+    const snap = await getDoc(doc(db, "users", user.uid));
+    if (!snap.exists()) {
+      console.error("Profile not found for user:", user.uid);
+      alert("Profile not found. Please sign in again.");
+      await signOut(auth);
+      window.location.href = "../auth/login.html";
+      return;
+    }
+    const data = snap.data();
+    if (!allowedRoles.includes(data.role)) {
+      alert("Unauthorized access. Redirecting to your dashboard.");
+      redirectToCorrectDashboard(data.role);
+      return;
+    }
+    userNameEl.textContent = data.fullname;
+    userEmailEl.textContent = data.email;
+    currentUserData = data;
+    return data;
+  } catch (err) {
+    console.error("Error loading user profile:", err);
+    alert("Permission denied or profile error. Please sign in again.");
+    await signOut(auth);
+    window.location.href = "../auth/login.html";
+    return;
+  }
+}
+
+function redirectToCorrectDashboard(role) {
+  switch (role) {
+    case "survivor":
+    case "anonymous": window.location.href = "../survivor/survivor.html"; break;
+    case "therapist": window.location.href = "../therapist/therapist.html"; break;
+    case "legal": window.location.href = "../legal/legal.html"; break;
+    case "admin": window.location.href = "../admin/admin.html"; break;
+    default: window.location.href = "../auth/login.html";
+  }
+}
+
+// Helper function to create notifications
+async function createNotification(survivorId, appointmentId, message, type = "appointment") {
+  try {
+    await addDoc(collection(db, "notifications"), {
+      userId: survivorId,
+      appointmentId: appointmentId,
+      message: message,
+      type: type,
+      read: false,
+      createdAt: serverTimestamp()
+    });
+  } catch (err) {
+    console.error("Error creating notification:", err);
+  }
+}
+
+// Update dashboard stats
+function updateStats(appointments) {
+  // Filter to only appointments assigned to this medical professional
+  const assignedAppointments = appointments.filter(appt => appt.assignedTo === currentUser.uid);
+  
+  const total = appointments.length;
+  const scheduled = assignedAppointments.filter(appt => appt.status === 'scheduled').length;
+  const completed = assignedAppointments.filter(appt => appt.status === 'completed').length;
+  
+  document.getElementById("total-appointments").textContent = total;
+  document.getElementById("scheduled-count").textContent = scheduled;
+  document.getElementById("completed-count").textContent = completed;
+}
+
+// Load medical professional's appointments
+function loadMedicalAppointments() {
+  const appointmentsList = document.getElementById("medical-appointments-list");
+  const filterValue = document.getElementById("medical-appointment-filter").value;
+  
+  const q = query(
+    collection(db, "appointments"),
+    where("professionalType", "==", "medical")
+  );
+  
+  onSnapshot(q, snapshot => {
+    appointmentsList.innerHTML = "";
+    
+    if (snapshot.empty) {
+      appointmentsList.innerHTML = "<li class='empty-note'>No appointment requests</li>";
+      updateStats([]);
+      return;
+    }
+    
+    // Collect all appointments and sort client-side
+    const appointments = [];
+    snapshot.forEach(doc => {
+      appointments.push({ id: doc.id, ...doc.data() });
+    });
+    
+    // Update stats with all appointments
+    updateStats(appointments);
+    
+    // Sort by date
+    appointments.sort((a, b) => {
+      const dateA = a.date.toDate ? a.date.toDate() : new Date(a.date);
+      const dateB = b.date.toDate ? b.date.toDate() : new Date(b.date);
+      return dateA - dateB;
+    });
+    
+    // Render appointments
+    appointments.forEach(appt => {
+      // Apply status filter if selected
+      if (filterValue && appt.status !== filterValue) {
+        return;
+      }
+
+      // Visibility rules:
+      // - Pending requests should be shown only if they are unassigned
+      // - Scheduled/completed/cancelled should be shown only if assignedTo === currentUser.uid
+      if (appt.status === 'pending') {
+        if (appt.assignedTo) return; // already taken by another professional
+      } else {
+        if (!appt.assignedTo || appt.assignedTo !== currentUser.uid) return; // not assigned to this medical user
+      }
+
+      const date = appt.date.toDate ? appt.date.toDate().toLocaleString() : new Date(appt.date).toLocaleString();
+      const li = document.createElement("li");
+      li.className = `appointment-item status-${appt.status}`;
+
+      li.innerHTML = `
+        <div class="appointment-header">
+          <div class="appointment-patient">
+            <strong>${appt.userName}</strong>
+            <small>${appt.userEmail}</small>
+          </div>
+          <span class="status-badge">${appt.status.toUpperCase()}</span>
+        </div>
+        <div class="appointment-body">
+          <p><i class="fa-solid fa-calendar"></i> ${date}</p>
+          <p><i class="fa-solid fa-comment"></i> ${appt.reason}</p>
+          ${appt.notes ? `<p><i class="fa-solid fa-note-sticky"></i> ${appt.notes}</p>` : ''}
+        </div>
+        <div class="appointment-actions">
+          ${appt.status === "pending" ? `
+            <button class="btn-action approve-btn" data-id="${appt.id}"><i class="fa-solid fa-check"></i> Approve</button>
+            <button class="btn-action decline-btn" data-id="${appt.id}"><i class="fa-solid fa-times"></i> Decline</button>
+          ` : ''}
+          ${appt.status === "scheduled" ? `
+            <button class="btn-action complete-btn" data-id="${appt.id}"><i class="fa-solid fa-check-circle"></i> Mark Complete</button>
+            <button class="btn-action cancel-btn" data-id="${appt.id}"><i class="fa-solid fa-ban"></i> Cancel</button>
+          ` : ''}
+        </div>
+      `;
+
+      appointmentsList.appendChild(li);
+    });
+    
+    if (appointmentsList.children.length === 0) {
+      appointmentsList.innerHTML = "<li class='empty-note'>No matching appointments</li>";
+    }
+    
+    // Attach event listeners for action buttons
+    attachAppointmentActions();
+  });
+}
+
+function attachAppointmentActions() {
+  // Approve appointment (transaction-safe)
+  document.querySelectorAll(".approve-btn").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      const appointmentId = e.currentTarget.dataset.id;
+      if (!confirm('Approve this appointment request?')) return;
+      try {
+        await runTransaction(db, async (tx) => {
+          const ref = doc(db, "appointments", appointmentId);
+          const snap = await tx.get(ref);
+          if (!snap.exists()) throw new Error('Appointment not found');
+          const data = snap.data();
+          if (data.assignedTo) throw new Error('Already assigned');
+          tx.update(ref, {
+            status: "scheduled",
+            assignedTo: currentUser.uid,
+            approvedAt: new Date(),
+            counselorName: currentUserData.fullname
+          });
+        });
+        
+        // Get appointment details and create notification
+        const apptSnap = await getDoc(doc(db, "appointments", appointmentId));
+        if (apptSnap.exists()) {
+          const survivorId = apptSnap.data().survivorId;
+          await createNotification(
+            survivorId, 
+            appointmentId, 
+            `Your medical appointment has been approved by ${currentUserData.fullname}`
+          );
+        }
+        
+        await logActivity(currentUser.uid, "Approved appointment request", "medical", "medical");
+      } catch (err) {
+        if (err.message && err.message.includes('Already assigned')) {
+          alert('Sorry — this appointment was already taken by another professional.');
+        } else {
+          console.error("Error approving appointment:", err);
+          alert("Error approving appointment");
+        }
+      }
+    });
+  });
+  
+  // Decline appointment
+  document.querySelectorAll(".decline-btn").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      const appointmentId = e.currentTarget.dataset.id;
+      if (!confirm('Decline this appointment request?')) return;
+      try {
+        const apptSnap = await getDoc(doc(db, "appointments", appointmentId));
+        const apptData = apptSnap.data();
+        
+        await updateDoc(doc(db, "appointments", appointmentId), {
+          status: "cancelled",
+          declinedAt: new Date()
+        });
+        
+        // Create notification for survivor
+        if (apptData.survivorId) {
+          await createNotification(
+            apptData.survivorId, 
+            appointmentId, 
+            `Your medical appointment was declined. Please try scheduling with another practitioner.`
+          );
+        }
+        
+        await logActivity(currentUser.uid, "Declined appointment request", "medical", "medical");
+      } catch (err) {
+        console.error("Error declining appointment:", err);
+        alert("Error declining appointment");
+      }
+    });
+  });
+  
+  // Mark complete
+  document.querySelectorAll(".complete-btn").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      const appointmentId = e.currentTarget.dataset.id;
+      if (!confirm('Mark this appointment as completed?')) return;
+      try {
+        const apptSnap = await getDoc(doc(db, "appointments", appointmentId));
+        const apptData = apptSnap.data();
+        
+        await updateDoc(doc(db, "appointments", appointmentId), {
+          status: "completed",
+          completedAt: new Date()
+        });
+        
+        // Create notification for survivor
+        if (apptData.survivorId) {
+          await createNotification(
+            apptData.survivorId, 
+            appointmentId, 
+            `Your medical appointment with ${currentUserData.fullname} has been completed.`
+          );
+        }
+        
+        await logActivity(currentUser.uid, "Completed appointment", "medical", "medical");
+      } catch (err) {
+        console.error("Error completing appointment:", err);
+        alert("Error completing appointment");
+      }
+    });
+  });
+  
+  // Cancel appointment
+  document.querySelectorAll(".cancel-btn").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      const appointmentId = e.currentTarget.dataset.id;
+      if (!confirm('Cancel this appointment?')) return;
+      try {
+        const apptSnap = await getDoc(doc(db, "appointments", appointmentId));
+        const apptData = apptSnap.data();
+        
+        await updateDoc(doc(db, "appointments", appointmentId), {
+          status: "cancelled",
+          cancelledAt: new Date()
+        });
+        
+        // Create notification for survivor
+        if (apptData.survivorId) {
+          await createNotification(
+            apptData.survivorId, 
+            appointmentId, 
+            `Your medical appointment with ${currentUserData.fullname} has been cancelled.`
+          );
+        }
+        
+        await logActivity(currentUser.uid, "Cancelled appointment", "medical", "medical");
+      } catch (err) {
+        console.error("Error cancelling appointment:", err);
+        alert("Error cancelling appointment");
+      }
+    });
+  });
+}
+
+// ===================== CHAT SYSTEM =====================
+let currentChatId = null;
+let currentRecipient = null;
+let chatMessagesListener = null;
+let chatRoomsListener = null;
+
+async function getOrCreateChatRoom(userId, userName) {
+  try {
+    const participants = [currentUser.uid, userId].sort();
+    const chatRoomId = participants.join('_');
+    const chatRoomRef = doc(db, 'chatRooms', chatRoomId);
+    const chatRoomSnap = await getDoc(chatRoomRef);
+    
+    if (chatRoomSnap.exists()) {
+      console.log('Found existing chat room:', chatRoomId);
+      return { id: chatRoomSnap.id, ...chatRoomSnap.data() };
+    } else {
+      console.log('Creating new chat room:', chatRoomId);
+      const chatRoomData = {
+        participants: {
+          [currentUser.uid]: `${currentUserData.fullname || currentUserData.email} (${currentUserData.role})`,
+          [userId]: userName
+        },
+        participantIds: participants,
+        lastMessage: '',
+        lastMessageTime: serverTimestamp(),
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
+      };
+      await setDoc(chatRoomRef, chatRoomData);
+      console.log('Chat room created successfully');
+      return { id: chatRoomId, ...chatRoomData };
+    }
+  } catch (err) {
+    console.error('Error creating/getting chat room:', err);
+    throw err;
+  }
+}
+
+async function loadUsersForChat() {
+  try {
+    // Query ALL users except current user
+    const usersQuery = query(collection(db, 'users'));
+    const snapshot = await getDocs(usersQuery);
+    const select = document.getElementById('new-chat-select');
+    
+    if (!select) {
+      console.error('Chat select element not found!');
+      return;
+    }
+    
+    select.innerHTML = '<option value="" disabled selected>Start new chat...</option>';
+    
+    if (snapshot.empty) {
+      select.innerHTML += '<option value="" disabled>No users available</option>';
+      return;
+    }
+    
+    // Filter out current user
+    const otherUsers = [];
+    snapshot.forEach(doc => {
+      if (doc.id !== currentUser.uid) {
+        const userData = doc.data();
+        otherUsers.push({
+          id: doc.id,
+          name: userData.fullname || userData.email || 'Unknown User',
+          role: userData.role || 'user',
+          email: userData.email || 'No email'
+        });
+      }
+    });
+    
+    if (otherUsers.length === 0) {
+      select.innerHTML += '<option value="" disabled>No other users available</option>';
+      return;
+    }
+    
+    // Sort by name
+    otherUsers.sort((a, b) => a.name.localeCompare(b.name));
+    
+    // Add options
+    otherUsers.forEach(user => {
+      const option = document.createElement('option');
+      option.value = user.id;
+      option.textContent = `${user.name} (${user.role})`;
+      option.dataset.name = `${user.name} (${user.role})`;
+      select.appendChild(option);
+    });
+    
+    // Add event listener for new chat selection
+    select.addEventListener('change', async e => {
+      if (e.target.value) {
+        const userId = e.target.value;
+        const userName = e.target.selectedOptions[0].dataset.name;
+        console.log('Starting new chat with', userName);
+        await startNewChat(userId, userName);
+        e.target.value = '';
+      }
+    });
+    
+  } catch (err) {
+    console.error('Error loading users for chat:', err);
+  }
+}
+
+async function startNewChat(userId, userName) {
+  try {
+    const chatRoom = await getOrCreateChatRoom(userId, userName);
+    console.log('Chat room created/retrieved:', chatRoom.id);
+    openChat(chatRoom.id, userId, userName);
+    await logActivity(currentUser.uid, 'Started new chat with user', userName, 'medical');
+  } catch (err) {
+    console.error('Error starting new chat:', err);
+    alert(`Error starting chat: ${err.message}`);
+  }
+}
+
+function loadChatRooms() {
+  if (chatRoomsListener) chatRoomsListener();
+  
+  const q = query(collection(db, 'chatRooms'));
+  chatRoomsListener = onSnapshot(q, snapshot => {
+    const chatList = document.getElementById('chat-list');
+    if (!chatList) return;
+    
+    if (snapshot.empty) {
+      chatList.innerHTML = '<div class="empty-chat-state">No chats yet. Start a new chat!</div>';
+      return;
+    }
+    
+    const chatRooms = [];
+    snapshot.forEach(doc => {
+      const chatData = doc.data();
+      if (chatData.participants && chatData.participants[currentUser.uid]) {
+        chatRooms.push({ id: doc.id, ...chatData });
+      }
+    });
+    
+    if (chatRooms.length === 0) {
+      chatList.innerHTML = '<div class="empty-chat-state">No chats yet. Start a new chat!</div>';
+      return;
+    }
+    
+    // Sort by last message time
+    chatRooms.sort((a, b) => {
+      const timeA = a.lastMessageTime?.toDate?.() || new Date(a.lastMessageTime);
+      const timeB = b.lastMessageTime?.toDate?.() || new Date(b.lastMessageTime);
+      return timeB - timeA;
+    });
+    
+    chatList.innerHTML = '';
+    chatRooms.forEach(chat => {
+      const chatItem = createChatListItem(chat.id, chat);
+      chatList.appendChild(chatItem);
+    });
+    
+    // Highlight current chat
+    if (currentChatId) {
+      document.querySelectorAll('.chat-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.dataset.chatId === currentChatId) item.classList.add('active');
+      });
+    }
+  }, error => console.error('Error loading chat rooms:', error));
+}
+
+function createChatListItem(chatId, chatData) {
+  const div = document.createElement('div');
+  div.className = 'chat-item';
+  div.dataset.chatId = chatId;
+  
+  // Find other participant
+  let otherParticipantId = null;
+  let otherParticipantName = 'Unknown';
+  for (const [participantId, participantName] of Object.entries(chatData.participants)) {
+    if (participantId !== currentUser.uid) {
+      otherParticipantId = participantId;
+      otherParticipantName = participantName;
+      break;
+    }
+  }
+  
+  div.dataset.recipientId = otherParticipantId;
+  div.dataset.recipientName = otherParticipantName;
+  
+  const lastMessageTime = chatData.lastMessageTime?.toDate?.() || new Date(chatData.lastMessageTime) || Date.now();
+  const timeStr = formatMessageTime(lastMessageTime);
+  
+  div.innerHTML = `
+    <div class="chat-item-header">
+      <span class="chat-name">${otherParticipantName}</span>
+      <span class="chat-time">${timeStr}</span>
+    </div>
+    <div class="chat-preview">${chatData.lastMessage || 'No messages yet'}</div>
+  `;
+  
+  div.addEventListener('click', () => openChat(chatId, otherParticipantId, otherParticipantName));
+  return div;
+}
+
+function formatMessageTime(timestamp) {
+  const now = new Date();
+  const messageDate = new Date(timestamp);
+  const diffMs = now - messageDate;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+  
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return messageDate.toLocaleDateString();
+}
+
+function openChat(chatId, recipientId, recipientName) {
+  console.log('Opening chat:', chatId, 'with', recipientName);
+  currentChatId = chatId;
+  currentRecipient = { id: recipientId, name: recipientName };
+  
+  // Show chat elements, hide empty state
+  const chatHeader = document.getElementById('chat-header');
+  const chatInputArea = document.getElementById('chat-input-area');
+  const chatMessages = document.getElementById('chat-messages');
+  const emptyChat = document.getElementById('empty-chat-state');
+  
+  if (chatHeader) {
+    chatHeader.style.display = 'flex';
+  }
+  if (chatInputArea) {
+    chatInputArea.style.display = 'flex';
+  }
+  if (chatMessages) {
+    chatMessages.style.display = 'block';
+    chatMessages.innerHTML = '';
+  }
+  if (emptyChat) {
+    emptyChat.style.display = 'none';
+  }
+  
+  // Update recipient info
+  const recipientNameEl = document.getElementById('recipient-name');
+  const recipientAvatar = document.getElementById('recipient-avatar');
+  const recipientStatus = document.getElementById('recipient-status');
+  
+  if (recipientNameEl) recipientNameEl.textContent = recipientName;
+  if (recipientAvatar) recipientAvatar.textContent = recipientName.charAt(0).toUpperCase();
+  if (recipientStatus) recipientStatus.textContent = 'Online';
+  
+  // Highlight active chat
+  document.querySelectorAll('.chat-item').forEach(item => {
+    item.classList.remove('active');
+    if (item.dataset.chatId === chatId) item.classList.add('active');
+  });
+  
+  // Load messages
+  loadChatMessages(chatId);
+}
+
+function loadChatMessages(chatId) {
+  if (chatMessagesListener) chatMessagesListener();
+  
+  console.log('Loading messages for chat:', chatId);
+  const messagesRef = collection(db, 'chatRooms', chatId, 'messages');
+  const q = query(messagesRef, orderBy('timestamp', 'asc'));
+  
+  chatMessagesListener = onSnapshot(q, snapshot => {
+    const messagesContainer = document.getElementById('chat-messages');
+    if (!messagesContainer) return;
+    
+    messagesContainer.innerHTML = '';
+    
+    if (snapshot.empty) {
+      messagesContainer.innerHTML = '<div class="empty-chat-state"><p>No messages yet. Start the conversation!</p></div>';
+      return;
+    }
+    
+    console.log(`Found ${snapshot.size} messages`);
+    snapshot.forEach(doc => {
+      const message = doc.data();
+      const messageElement = createMessageElement(message);
+      messagesContainer.appendChild(messageElement);
+    });
+    
+    // Scroll to bottom
+    setTimeout(() => {
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }, 100);
+  }, error => {
+    console.error('Error loading messages:', error);
+    const messagesContainer = document.getElementById('chat-messages');
+    if (messagesContainer) {
+      messagesContainer.innerHTML = '<div class="empty-chat-state"><p>Error loading messages. Please try again.</p></div>';
+    }
+  });
+}
+
+function createMessageElement(message) {
+  const div = document.createElement('div');
+  const isSent = message.senderId === currentUser.uid;
+  const messageTime = message.timestamp?.toDate?.() || new Date(message.timestamp);
+  const timeStr = messageTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  
+  div.className = `message ${isSent ? 'sent' : 'received'}`;
+  div.innerHTML = `
+    <div class="message-content">${message.text}</div>
+    <div class="message-time">${timeStr}</div>
+  `;
+  return div;
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chat-message-input');
+  if (!input) {
+    console.error('Chat input not found');
+    return;
+  }
+  
+  const text = input.value.trim();
+  
+  if (!text || !currentChatId || !currentRecipient) {
+    console.log('Cannot send: missing text, chatId, or recipient');
+    console.log('Text:', text, 'Chat ID:', currentChatId, 'Recipient:', currentRecipient);
+    return;
+  }
+  
+  console.log('Sending message:', text);
+  console.log('Chat ID:', currentChatId, 'Recipient:', currentRecipient);
+  
+  try {
+    // Create message
+    const messageData = {
+      text,
+      senderId: currentUser.uid,
+      senderName: currentUserData.fullname || currentUserData.email,
+      senderRole: currentUserData.role || 'medical',
+      recipientId: currentRecipient.id,
+      recipientName: currentRecipient.name,
+      timestamp: serverTimestamp(),
+      read: false
+    };
+    
+    console.log('Adding message to Firestore...');
+    
+    // Add message to subcollection
+    await addDoc(collection(db, 'chatRooms', currentChatId, 'messages'), messageData);
+    
+    // Update chat room last message
+    await updateDoc(doc(db, 'chatRooms', currentChatId), {
+      lastMessage: text.length > 50 ? text.substring(0, 50) + '...' : text,
+      lastMessageTime: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    
+    // Clear input
+    input.value = '';
+    input.style.height = 'auto';
+    
+    // Update send button state
+    const sendBtn = document.getElementById('send-message-btn');
+    if (sendBtn) sendBtn.disabled = true;
+    
+    // Log activity
+    await logActivity(currentUser.uid, 'Sent message to user', currentRecipient.name, 'medical');
+    console.log('Message sent successfully');
+    
+  } catch (err) {
+    console.error('Error sending message:', err);
+    console.error('Error details:', err.code, err.message);
+    alert(`Error: ${err.message}. Check browser console for details.`);
+  }
+}
+
+function initChat() {
+  console.log('Initializing chat for medical...');
+  
+  if (!currentUser || !currentUser.uid) {
+    console.log('No user logged in, skipping chat initialization');
+    return;
+  }
+  
+  console.log('Medical professional is logged in, loading chat...');
+  
+  // Load ALL users
+  loadUsersForChat();
+  loadChatRooms();
+  
+  // Message input handling
+  const messageInput = document.getElementById('chat-message-input');
+  const sendBtn = document.getElementById('send-message-btn');
+  
+  if (!messageInput || !sendBtn) {
+    console.error('Chat elements not found!');
+    return;
+  }
+  
+  messageInput.addEventListener('input', function() {
+    // Auto-resize textarea
+    this.style.height = 'auto';
+    this.style.height = this.scrollHeight + 'px';
+    
+    // Enable/disable send button
+    sendBtn.disabled = !this.value.trim();
+  });
+  
+  messageInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (!sendBtn.disabled) sendMessage();
+    }
+  });
+  
+  sendBtn.addEventListener('click', sendMessage);
+  
+  console.log('Chat initialized for medical');
+}
+
+// Section Navigation
+function setupSectionNavigation() {
+  const sidebarItems = document.querySelectorAll('.sidebar-item');
+  
+  sidebarItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      const sectionName = item.dataset.section;
+      
+      // Remove active class from all items
+      sidebarItems.forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+      
+      // Hide all sections
+      document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active');
+      });
+      
+      // Show selected section
+      const selectedSection = document.getElementById(sectionName);
+      if (selectedSection) {
+        selectedSection.classList.add('active');
+      }
+    });
+  });
+}
+
+// Load profile data
+async function loadProfileData() {
+  if (currentUserData) {
+    document.getElementById('profile-name').value = currentUserData.fullname || '';
+    document.getElementById('profile-email').value = currentUserData.email || '';
+    document.getElementById('profile-phone').value = currentUserData.phone || '';
+    document.getElementById('profile-bio').value = currentUserData.bio || '';
+  }
+}
+
+// Save profile changes
+document.querySelector('.profile-form')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try {
+    await updateDoc(doc(db, "users", currentUser.uid), {
+      phone: document.getElementById('profile-phone').value,
+      bio: document.getElementById('profile-bio').value
+    });
+    alert('Profile updated successfully!');
+    await logActivity(currentUser.uid, "Updated profile", null, "medical");
+  } catch (err) {
+    console.error("Error updating profile:", err);
+    alert("Error updating profile");
+  }
+});
+
+// Filter appointments
+document.getElementById("medical-appointment-filter").addEventListener("change", () => {
+  loadMedicalAppointments();
+});
+
+onAuthStateChanged(auth, async user => {
+  if (!user) window.location.href = "../auth/login.html";
+  else {
+    currentUser = user;
+    await loadUser(user);
+    await logActivity(user.uid, "Accessed medical dashboard", null, "medical");
+    setupSectionNavigation();
+    loadProfileData();
+    loadMedicalAppointments();
+    initChat(); // Initialize chat system
+  }
+});
+
+document.querySelector(".signout-btn").addEventListener("click", async () => {
+  await logActivity(currentUser.uid, "Signed out", null, "medical");
+  await signOut(auth);
+  window.location.href = "../auth/login.html";
+});
+</script>
+
+</body>
+</html>
+
