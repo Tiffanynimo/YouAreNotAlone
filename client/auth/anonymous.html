@@ -25,10 +25,7 @@
       font-weight: 600;
       transition: 0.2s;
     }
-    .tab-btn.active {
-      background: #B68597;
-      color: white;
-    }
+    .tab-btn.active { background: #B68597; color: white; }
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
     .error-msg {
@@ -59,7 +56,6 @@
     <h1>You Are Not Alone</h1>
     <p class="subtitle">Anonymous access — no email needed</p>
 
-    <!-- Tabs -->
     <div class="tabs">
       <button class="tab-btn active" id="tab-signup">Sign Up</button>
       <button class="tab-btn" id="tab-login">Log In</button>
@@ -68,8 +64,8 @@
     <!-- Sign Up Panel -->
     <div class="tab-panel active" id="panel-signup">
       <form id="anonSignupForm">
-        <input id="signup-nickname" type="text" placeholder="Choose a nickname" required maxlength="30" />
-        <input id="signup-password" type="password" placeholder="Choose a password" required />
+        <input id="signup-nickname" type="text" placeholder="Choose a nickname" autocomplete="username" required maxlength="30" />
+        <input id="signup-password" type="password" placeholder="Choose a password" autocomplete="new-password" required />
         <button type="submit" id="signup-btn">Create Anonymous Account</button>
       </form>
       <div class="error-msg" id="signup-error"></div>
@@ -79,8 +75,8 @@
     <!-- Log In Panel -->
     <div class="tab-panel" id="panel-login">
       <form id="anonLoginForm">
-        <input id="login-nickname" type="text" placeholder="Your nickname" required />
-        <input id="login-password" type="password" placeholder="Your password" required />
+        <input id="login-nickname" type="text" placeholder="Your nickname" autocomplete="username" required />
+        <input id="login-password" type="password" placeholder="Your password" autocomplete="current-password" required />
         <button type="submit" id="login-btn">Log In</button>
       </form>
       <div class="error-msg" id="login-error"></div>
@@ -91,7 +87,7 @@
   </div>
 
 <script type="module">
-import { authClient, redirectToDashboard } from "../lib/auth-client.js";
+import { signUp, signIn, redirectToDashboard } from "../lib/auth-client.js";
 
 // ── Tab switching ──────────────────────────────────────────────────
 document.getElementById("tab-signup").addEventListener("click", () => switchTab("signup"));
@@ -104,7 +100,7 @@ function switchTab(tab) {
   document.getElementById("panel-" + tab).classList.add("active");
 }
 
-// Build a consistent email from a nickname so the same user can always log back in
+// Build a consistent email from nickname so same user can always log back in
 function nicknameToEmail(nickname) {
   return `anon_${nickname.trim().toLowerCase().replace(/\s+/g, "_")}@anonymous.local`;
 }
@@ -114,15 +110,15 @@ function showError(id, msg) {
   el.textContent = msg;
   el.style.display = "block";
 }
-function hideError(id) {
+function hideMsg(id) {
   document.getElementById(id).style.display = "none";
 }
 
 // ── Anonymous Sign Up ──────────────────────────────────────────────
 document.getElementById("anonSignupForm").addEventListener("submit", async (e) => {
   e.preventDefault();
-  hideError("signup-error");
-  document.getElementById("signup-success").style.display = "none";
+  hideMsg("signup-error");
+  hideMsg("signup-success");
 
   const nickname = document.getElementById("signup-nickname").value.trim();
   const password = document.getElementById("signup-password").value;
@@ -134,11 +130,10 @@ document.getElementById("anonSignupForm").addEventListener("submit", async (e) =
   btn.disabled = true;
   btn.textContent = "Creating account...";
 
-  // Use a deterministic email based on the nickname so the user can log back in
   const anonEmail = nicknameToEmail(nickname);
 
   try {
-    const { data, error } = await authClient.signUp.email({
+    const { data, error } = await signUp({
       email: anonEmail,
       password,
       name: nickname,
@@ -155,9 +150,11 @@ document.getElementById("anonSignupForm").addEventListener("submit", async (e) =
       return;
     }
 
-    redirectToDashboard("anonymous");
+    document.getElementById("signup-success").textContent = "Account created! Taking you to your dashboard...";
+    document.getElementById("signup-success").style.display = "block";
+    setTimeout(() => redirectToDashboard("anonymous"), 1000);
   } catch (err) {
-    showError("signup-error", err.message || "Something went wrong. Please try again.");
+    showError("signup-error", "Something went wrong. Please try again.");
   } finally {
     btn.disabled = false;
     btn.textContent = "Create Anonymous Account";
@@ -167,7 +164,7 @@ document.getElementById("anonSignupForm").addEventListener("submit", async (e) =
 // ── Anonymous Log In ───────────────────────────────────────────────
 document.getElementById("anonLoginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
-  hideError("login-error");
+  hideMsg("login-error");
 
   const nickname = document.getElementById("login-nickname").value.trim();
   const password = document.getElementById("login-password").value;
@@ -181,7 +178,7 @@ document.getElementById("anonLoginForm").addEventListener("submit", async (e) =>
   const anonEmail = nicknameToEmail(nickname);
 
   try {
-    const { data, error } = await authClient.signIn.email({ email: anonEmail, password });
+    const { data, error } = await signIn({ email: anonEmail, password });
 
     if (error) {
       showError("login-error", "Incorrect nickname or password. Please try again.");

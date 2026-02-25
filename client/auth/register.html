@@ -35,9 +35,9 @@
     <p class="subtitle">A safe space for healing and support</p>
 
     <form id="signupForm">
-      <input id="fullname" type="text" placeholder="Full Name" required />
+      <input id="fullname" type="text" placeholder="Full Name" autocomplete="name" required />
 
-      <select id="role" required>
+      <select id="role" autocomplete="off" required>
         <option value="" disabled selected>I am a...</option>
         <option value="survivor">Survivor</option>
         <option value="medical">Medical Practitioner</option>
@@ -46,9 +46,9 @@
         <option value="admin">Admin</option>
       </select>
 
-      <input id="phone" type="tel" placeholder="Phone (Optional)" />
-      <input id="email" type="email" placeholder="Email" required />
-      <input id="password" type="password" placeholder="Password (min 6 characters)" required />
+      <input id="phone" type="tel" placeholder="Phone (Optional)" autocomplete="tel" />
+      <input id="email" type="email" placeholder="Email" autocomplete="email" required />
+      <input id="password" type="password" placeholder="Password (min 6 characters)" autocomplete="new-password" required />
 
       <button type="submit" id="signup-btn">Create Account</button>
       <a href="login.html"><button type="button">Back to Login</button></a>
@@ -62,7 +62,7 @@
   </div>
 
 <script type="module">
-import { authClient, redirectToDashboard } from "../lib/auth-client.js";
+import { signUp, redirectToDashboard } from "../lib/auth-client.js";
 
 const btn = document.getElementById("signup-btn");
 const errorEl = document.getElementById("signup-error");
@@ -100,14 +100,7 @@ document.getElementById("signupForm").addEventListener("submit", async (e) => {
   btn.textContent = "Creating account...";
 
   try {
-    const { data, error } = await authClient.signUp.email({
-      email,
-      password,
-      name: fullname,
-      fullname,
-      role,
-      phone,
-    });
+    const { data, error } = await signUp({ email, password, name: fullname, fullname, role, phone });
 
     if (error) {
       if (error.message?.toLowerCase().includes("already")) {

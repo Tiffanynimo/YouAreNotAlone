@@ -1,20 +1,56 @@
-import { createAuthClient } from "better-auth/client";
+// Auth helpers — uses BetterAuth's REST API directly (no Node.js imports needed)
 
-export const authClient = createAuthClient({
-  baseURL: window.location.origin,
-});
+const BASE = "/api/auth";
 
-// Helper: get current session
+// ── Sign up ────────────────────────────────────────────────────────
+export async function signUp({ email, password, name, fullname, role, phone }) {
+  const res = await fetch(`${BASE}/sign-up/email`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password, name, fullname, role, phone }),
+  });
+  const data = await res.json();
+  if (!res.ok) return { error: data };
+  return { data };
+}
+
+// ── Sign in ────────────────────────────────────────────────────────
+export async function signIn({ email, password }) {
+  const res = await fetch(`${BASE}/sign-in/email`, {
+    method: "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+  const data = await res.json();
+  if (!res.ok) return { error: data };
+  return { data };
+}
+
+// ── Get current session ────────────────────────────────────────────
 export async function getSession() {
   try {
-    const session = await authClient.getSession();
-    return session?.data || null;
+    const res = await fetch(`${BASE}/get-session`, {
+      credentials: "include",
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data || null;
   } catch {
     return null;
   }
 }
 
-// Helper: check auth and redirect if not logged in
+// ── Sign out ───────────────────────────────────────────────────────
+export async function signOut() {
+  await fetch(`${BASE}/sign-out`, {
+    method: "POST",
+    credentials: "include",
+  });
+}
+
+// ── Check auth and redirect if not logged in ───────────────────────
 export async function requireSession() {
   const session = await getSession();
   if (!session || !session.user) {
@@ -24,13 +60,13 @@ export async function requireSession() {
   return session;
 }
 
-// Helper: sign out
+// ── Sign out and redirect ──────────────────────────────────────────
 export async function signOutAndRedirect() {
-  await authClient.signOut();
+  await signOut();
   window.location.href = "/auth/login.html";
 }
 
-// Helper: redirect user to correct dashboard based on role
+// ── Redirect user to correct dashboard based on role ──────────────
 export function redirectToDashboard(role) {
   switch (role) {
     case "survivor":
@@ -50,6 +86,6 @@ export function redirectToDashboard(role) {
       window.location.href = "/admin/admin.html";
       break;
     default:
-      alert("Invalid user type.");
+      alert("Unknown role: " + role);
   }
 }
