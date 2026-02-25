@@ -5,6 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Register | You Are Not Alone</title>
   <link rel="stylesheet" href="auth.css" />
+  <style>
+    .error-msg {
+      color: #c0392b;
+      background: #fdecea;
+      border-radius: 5px;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+    .success-msg {
+      color: #27ae60;
+      background: #eafaf1;
+      border-radius: 5px;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+    button:disabled { opacity: 0.7; cursor: not-allowed; }
+  </style>
 </head>
 <body class="auth-body">
 
@@ -13,29 +34,28 @@
     <h1>You Are Not Alone</h1>
     <p class="subtitle">A safe space for healing and support</p>
 
-  <form id="signupForm">
-  <input id="fullname" type="text" placeholder="Full Name" required />
+    <form id="signupForm">
+      <input id="fullname" type="text" placeholder="Full Name" required />
 
-  <select id="role" required>
-    <option value="" disabled selected>I am a...</option>
-    <option value="survivor">Survivor</option>
-    <option value="medical">Medical Practitioner</option>
-    <option value="therapist">Therapist</option>
-    <option value="legal">Legal Representative</option>
-    <option value="admin">Admin</option>
-  </select>
+      <select id="role" required>
+        <option value="" disabled selected>I am a...</option>
+        <option value="survivor">Survivor</option>
+        <option value="medical">Medical Practitioner</option>
+        <option value="therapist">Therapist</option>
+        <option value="legal">Legal Representative</option>
+        <option value="admin">Admin</option>
+      </select>
 
-  <input id="phone" type="tel" placeholder="Phone (Optional)" />
-  <input id="email" type="email" placeholder="Email" required />
-  <input id="password" type="password" placeholder="Password" required />
+      <input id="phone" type="tel" placeholder="Phone (Optional)" />
+      <input id="email" type="email" placeholder="Email" required />
+      <input id="password" type="password" placeholder="Password (min 6 characters)" required />
 
-  <button type="submit">Create Account</button>
+      <button type="submit" id="signup-btn">Create Account</button>
+      <a href="login.html"><button type="button">Back to Login</button></a>
+    </form>
 
-  <a href="login.html">
-    <button type="button">Back to Login</button>
-      </a>
-
-</form>
+    <div class="error-msg" id="signup-error"></div>
+    <div class="success-msg" id="signup-success"></div>
 
     <p class="signup-link">Prefer to stay anonymous? <a href="anonymous.html">Sign up anonymously</a></p>
     <p class="crisis">Crisis Support: 1-800-656-4673</p>
@@ -44,14 +64,40 @@
 <script type="module">
 import { authClient, redirectToDashboard } from "../lib/auth-client.js";
 
+const btn = document.getElementById("signup-btn");
+const errorEl = document.getElementById("signup-error");
+const successEl = document.getElementById("signup-success");
+
+function showError(msg) {
+  errorEl.textContent = msg;
+  errorEl.style.display = "block";
+  successEl.style.display = "none";
+}
+
+function showSuccess(msg) {
+  successEl.textContent = msg;
+  successEl.style.display = "block";
+  errorEl.style.display = "none";
+}
+
 document.getElementById("signupForm").addEventListener("submit", async (e) => {
   e.preventDefault();
+  errorEl.style.display = "none";
+  successEl.style.display = "none";
 
-  const fullname = document.getElementById("fullname").value;
+  const fullname = document.getElementById("fullname").value.trim();
   const role = document.getElementById("role").value;
-  const phone = document.getElementById("phone").value;
-  const email = document.getElementById("email").value;
+  const phone = document.getElementById("phone").value.trim();
+  const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
+
+  if (!fullname) return showError("Please enter your full name.");
+  if (!role) return showError("Please select your role.");
+  if (!email) return showError("Please enter your email.");
+  if (password.length < 6) return showError("Password must be at least 6 characters.");
+
+  btn.disabled = true;
+  btn.textContent = "Creating account...";
 
   try {
     const { data, error } = await authClient.signUp.email({
@@ -64,17 +110,21 @@ document.getElementById("signupForm").addEventListener("submit", async (e) => {
     });
 
     if (error) {
-      alert("Signup Error: " + error.message);
+      if (error.message?.toLowerCase().includes("already")) {
+        showError("An account with this email already exists. Try logging in instead.");
+      } else {
+        showError(error.message || "Signup failed. Please try again.");
+      }
       return;
     }
 
-    if (role === "survivor") {
-      window.location.href = "verify.html";
-    } else {
-      redirectToDashboard(role);
-    }
-  } catch (error) {
-    alert("Signup Error: " + error.message);
+    showSuccess("Account created! Taking you to your dashboard...");
+    setTimeout(() => redirectToDashboard(role), 1000);
+  } catch (err) {
+    showError("Something went wrong. Please try again.");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Create Account";
   }
 });
 </script>

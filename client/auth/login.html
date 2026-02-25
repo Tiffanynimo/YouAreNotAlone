@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login | You Are Not Alone</title>
   <link rel="stylesheet" href="auth.css" />
+  <style>
+    .error-msg {
+      color: #c0392b;
+      background: #fdecea;
+      border-radius: 5px;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+    button:disabled { opacity: 0.7; cursor: not-allowed; }
+  </style>
 </head>
 <body class="auth-body">
 
@@ -16,34 +28,52 @@
     <form id="loginForm">
       <input id="email" type="email" placeholder="Email" required />
       <input id="password" type="password" placeholder="Password" required />
-      <button type="submit">Sign In</button>
+      <button type="submit" id="login-btn">Sign In</button>
     </form>
 
+    <div class="error-msg" id="login-error"></div>
+
     <p class="signup-link">Need an account? <a href="register.html">Sign up</a></p>
+    <p class="signup-link">Anonymous user? <a href="anonymous.html">Log in here</a></p>
     <p class="crisis">Crisis Support: 1-800-656-4673</p>
   </div>
 
 <script type="module">
 import { authClient, redirectToDashboard } from "../lib/auth-client.js";
 
+const btn = document.getElementById("login-btn");
+const errorEl = document.getElementById("login-error");
+
+function showError(msg) {
+  errorEl.textContent = msg;
+  errorEl.style.display = "block";
+}
+
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
+  errorEl.style.display = "none";
 
-  const email = document.getElementById("email").value;
+  const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
+
+  btn.disabled = true;
+  btn.textContent = "Signing in...";
 
   try {
     const { data, error } = await authClient.signIn.email({ email, password });
 
     if (error) {
-      alert("Login error: " + error.message);
+      showError("Incorrect email or password. Please try again.");
       return;
     }
 
     const role = data.user.role || "survivor";
     redirectToDashboard(role);
-  } catch (error) {
-    alert("Login error: " + error.message);
+  } catch (err) {
+    showError("Something went wrong. Please try again.");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Sign In";
   }
 });
 </script>
