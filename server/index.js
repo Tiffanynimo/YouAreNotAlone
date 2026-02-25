@@ -80,7 +80,7 @@ io.on("connection", (socket) => {
 });
 
 // BetterAuth handler — must come BEFORE express.json() so it can parse its own body
-app.all("/api/auth/*splat", toNodeHandler(auth));
+app.all("/api/auth/*", toNodeHandler(auth));
 
 // JSON body parser for all other routes
 app.use(express.json());
@@ -100,9 +100,9 @@ app.use("/api/flagged-messages", require("./routes/flaggedMessages"));
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, "..", "client")));
 
-// Fallback: serve homepage for root
+// Redirect root to homepage
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "client", "homepage", "homepage.html"));
+  res.redirect("/homepage/homepage.html");
 });
 
 httpServer.listen(PORT, () => {
