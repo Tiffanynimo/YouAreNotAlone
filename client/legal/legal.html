@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>You Are Not Alone — Legal Dashboard</title>
+  <link rel="stylesheet" href="legal.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <nav class="top-nav">
+    <div class="left">
+      <img src="logo.png" alt="logo" class="logo" />
+      <div class="title">
+        <h1>You Are Not Alone</h1>
+        <p>Legal Representative</p>
+      </div>
+    </div>
+
+    <div class="center">
+      <span class="crisis-label">Crisis: 1-800-656-4673</span>
+    </div>
+
+    <div class="right">
+      <div class="user-info">
+        <p class="user-name">Loading...</p>
+        <p class="user-email">Loading...</p>
+      </div>
+      <button class="signout-btn">Sign Out</button>
+    </div>
+  </nav>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <a href="#" class="sidebar-item active"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+        <a href="#" class="sidebar-item"><i class="fa-solid fa-briefcase"></i><span>Cases</span></a>
+        <a href="#" class="sidebar-item"><i class="fa-solid fa-calendar-days"></i><span>Consultations</span></a>
+        <a href="#messages" class="sidebar-item"><i class="fa-solid fa-comments"></i><span>Messages</span></a>
+        <a href="#" class="sidebar-item"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header class="page-header">
+        <h2 class="page-title">Legal Dashboard</h2>
+      </header>
+
+      <section class="stats">
+        <article class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-folder-open"></i></div>
+          <div class="stat-body">
+            <div class="stat-value" id="total-cases">0</div>
+            <div class="stat-label">Total Cases</div>
+          </div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-gavel"></i></div>
+          <div class="stat-body">
+            <div class="stat-value" id="active-cases">0</div>
+            <div class="stat-label">Active Cases</div>
+          </div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-comments"></i></div>
+          <div class="stat-body">
+            <div class="stat-value" id="consultations-count">0</div>
+            <div class="stat-label">Consultations</div>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h3>Client Consultations</h3>
+        </div>
+        <div class="panel-body">
+          <div class="consultation-controls">
+            <select id="legal-appointment-filter">
+              <option value="">All</option>
+              <option value="pending">Pending</option>
+              <option value="scheduled">Scheduled</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <ul id="legal-appointments-list" class="appointments-list">
+            <li class="empty-note">Loading consultations...</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Messages Section -->
+      <section id="messages" class="panel">
+        <div class="panel-header">
+          <h3>Messages</h3>
+        </div>
+        <div class="panel-body">
+          <div class="chat-container">
+            <div class="chat-sidebar">
+              <div class="chat-list-header">
+                <h4>Chats</h4>
+                <input type="text" id="search-chats" class="search-chats" placeholder="Search chats...">
+              </div>
+              <div class="chat-list" id="chat-list">
+                <div class="empty-chat-state">Loading chats...</div>
+              </div>
+              <div class="start-new-chat">
+                <select id="new-chat-select" class="new-chat-select">
+                  <option value="" disabled selected>Start new chat...</option>
+                </select>
+              </div>
+            </div>
+            <div class="chat-main">
+              <div class="empty-chat" id="empty-chat-state">
+                <i class="fa-solid fa-comment-dots"></i>
+                <h4>Select a chat to start messaging</h4>
+                <p>Choose a user from the list to begin your conversation</p>
+              </div>
+              <div class="chat-header" id="chat-header" style="display: none;">
+                <div class="chat-recipient">
+                  <div class="chat-recipient-avatar" id="recipient-avatar">U</div>
+                  <div>
+                    <h4 id="recipient-name">User Name</h4>
+                    <small id="recipient-status">Online</small>
+                  </div>
+                </div>
+              </div>
+              <div class="chat-messages" id="chat-messages" style="display: none;"></div>
+              <div class="chat-input-area" id="chat-input-area" style="display: none;">
+                <textarea id="chat-message-input" placeholder="Type your message..." rows="1"></textarea>
+                <button id="send-message-btn" disabled>Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="guidelines-grid">
+        <div class="guideline-card guideline-yellow">
+          <h4>Legal Best Practices</h4>
+          <ul>
+            <li>Ensure client confidentiality at all times</li>
+            <li>Provide clear explanation of legal options</li>
+            <li>Document all case details thoroughly</li>
+            <li>Coordinate with medical and therapy teams</li>
+          </ul>
+        </div>
+        <div class="guideline-card guideline-blue">
+          <h4>Case Management</h4>
+          <ul>
+            <li>Keep detailed records of all proceedings</li>
+            <li>Update case status regularly</li>
+            <li>Provide timely updates to clients</li>
+            <li>Maintain professional boundaries</li>
+          </ul>
+        </div>
+      </section>
+
+      <footer class="dashboard-footer">
+        <p class="help-text">You are not alone. Help is available 24/7.</p>
+      </footer>
+    </main>
+  </div>
+
+<script type="module">
+import { requireSession, signOutAndRedirect, redirectToDashboard } from "../lib/auth-client.js";
+import { api, logActivity } from "../lib/api.js";
+
+const userNameEl = document.querySelector(".user-name");
+const userEmailEl = document.querySelector(".user-email");
+
+let currentUser = null;
+let currentUserData = null;
+
+// ===================== AUTH & INITIALIZATION =====================
+async function init() {
+  const session = await requireSession();
+  currentUser = session.user;
+  currentUserData = session.user;
+
+  if (currentUser.role !== "legal") {
+    redirectToDashboard(currentUser.role);
+    return;
+  }
+
+  userNameEl.textContent = currentUser.fullname || currentUser.name;
+  userEmailEl.textContent = currentUser.email;
+
+  await logActivity("Accessed legal dashboard", null, "legal");
+  loadLegalAppointments();
+  initChat();
+}
+
+init();
+
+document.querySelector(".signout-btn").addEventListener("click", async () => {
+  await logActivity("Signed out", null, "legal");
+  signOutAndRedirect();
+});
+
+// ===================== APPOINTMENTS =====================
+async function createNotification(survivorId, appointmentId, message) {
+  try {
+    await api.post("/notifications", { userId: survivorId, appointmentId, message, type: "appointment" });
+  } catch (err) {
+    console.error("Error creating notification:", err);
+  }
+}
+
+async function loadLegalAppointments() {
+  const appointmentsList = document.getElementById("legal-appointments-list");
+  const filterValue = document.getElementById("legal-appointment-filter").value;
+
+  try {
+    const appointments = await api.get("/appointments?professionalType=legal");
+    appointmentsList.innerHTML = "";
+
+    if (!appointments.length) {
+      appointmentsList.innerHTML = "<li class='empty-note'>No consultation requests</li>";
+      return;
+    }
+
+    // Update stats
+    const assigned = appointments.filter(a => a.professional_id === currentUser.id);
+    document.getElementById("total-cases").textContent = appointments.length;
+    document.getElementById("active-cases").textContent = assigned.filter(a => a.status === 'scheduled').length;
+    document.getElementById("consultations-count").textContent = assigned.filter(a => a.status === 'completed').length;
+
+    appointments.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    appointments.forEach(appt => {
+      if (filterValue && appt.status !== filterValue) return;
+
+      if (appt.status === 'pending') {
+        if (appt.professional_id) return;
+      } else {
+        if (!appt.professional_id || appt.professional_id !== currentUser.id) return;
+      }
+
+      const date = new Date(appt.date).toLocaleString();
+      const li = document.createElement("li");
+      li.className = `appointment-item status-${appt.status}`;
+
+      li.innerHTML = `
+        <div class="appointment-header">
+          <div class="appointment-patient">
+            <strong>${appt.user_name || 'Unknown'}</strong>
+            <small>${appt.user_email || ''}</small>
+          </div>
+          <span class="status-badge">${appt.status.toUpperCase()}</span>
+        </div>
+        <div class="appointment-body">
+          <p><i class="fa-solid fa-calendar"></i> ${date}</p>
+          <p><i class="fa-solid fa-comment"></i> ${appt.reason || ''}</p>
+          ${appt.notes ? `<p><i class="fa-solid fa-note-sticky"></i> ${appt.notes}</p>` : ''}
+        </div>
+        <div class="appointment-actions">
+          ${appt.status === "pending" ? `
+            <button class="btn-action approve-btn" data-id="${appt.id}"><i class="fa-solid fa-check"></i> Approve</button>
+            <button class="btn-action decline-btn" data-id="${appt.id}"><i class="fa-solid fa-times"></i> Decline</button>
+          ` : ''}
+          ${appt.status === "scheduled" ? `
+            <button class="btn-action complete-btn" data-id="${appt.id}"><i class="fa-solid fa-check-circle"></i> Mark Complete</button>
+            <button class="btn-action cancel-btn" data-id="${appt.id}"><i class="fa-solid fa-ban"></i> Cancel</button>
+          ` : ''}
+        </div>
+      `;
+      appointmentsList.appendChild(li);
+    });
+
+    if (appointmentsList.children.length === 0) {
+      appointmentsList.innerHTML = "<li class='empty-note'>No matching consultations</li>";
+    }
+
+    attachAppointmentActions();
+  } catch (err) {
+    console.error("Error loading consultations:", err);
+    appointmentsList.innerHTML = "<li class='empty-note'>Error loading consultations</li>";
+  }
+}
+
+function attachAppointmentActions() {
+  document.querySelectorAll(".approve-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      if (!confirm('Approve this consultation request?')) return;
+      try {
+        await api.put(`/appointments/${btn.dataset.id}/approve`);
+        await logActivity("Approved consultation request", "legal", "legal");
+        loadLegalAppointments();
+      } catch (err) {
+        if (err.message?.includes('already')) {
+          alert('Sorry — this consultation was already taken by another professional.');
+        } else {
+          alert("Error approving consultation");
+        }
+      }
+    });
+  });
+
+  document.querySelectorAll(".decline-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      if (!confirm('Decline this consultation request?')) return;
+      try {
+        await api.put(`/appointments/${btn.dataset.id}/decline`);
+        await logActivity("Declined consultation request", "legal", "legal");
+        loadLegalAppointments();
+      } catch (err) {
+        alert("Error declining consultation");
+      }
+    });
+  });
+
+  document.querySelectorAll(".complete-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      if (!confirm('Mark this consultation as completed?')) return;
+      try {
+        await api.put(`/appointments/${btn.dataset.id}/complete`);
+        await logActivity("Completed consultation", "legal", "legal");
+        loadLegalAppointments();
+      } catch (err) {
+        alert("Error completing consultation");
+      }
+    });
+  });
+
+  document.querySelectorAll(".cancel-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      if (!confirm('Cancel this consultation?')) return;
+      try {
+        await api.put(`/appointments/${btn.dataset.id}/cancel`);
+        await logActivity("Cancelled consultation", "legal", "legal");
+        loadLegalAppointments();
+      } catch (err) {
+        alert("Error cancelling consultation");
+      }
+    });
+  });
+}
+
+document.getElementById("legal-appointment-filter").addEventListener("change", () => {
+  loadLegalAppointments();
+});
+
+// ===================== CHAT SYSTEM =====================
+let currentChatId = null;
+let currentRecipient = null;
+let chatPollInterval = null;
+
+async function getOrCreateChatRoom(userId, userName) {
+  const participants = [currentUser.id, userId].sort();
+  const chatRoomId = participants.join('_');
+  try {
+    const rooms = await api.get("/chat/rooms");
+    const existing = rooms.find(r => r.id === chatRoomId);
+    if (existing) return existing;
+  } catch (e) {}
+  return await api.post("/chat/rooms", { recipientId: userId, recipientName: userName });
+}
+
+async function loadUsersForChat() {
+  try {
+    const users = await api.get("/users");
+    const select = document.getElementById('new-chat-select');
+    if (!select) return;
+    select.innerHTML = '<option value="" disabled selected>Start new chat...</option>';
+    const otherUsers = users.filter(u => u.id !== currentUser.id);
+    otherUsers.sort((a, b) => (a.fullname || a.name || '').localeCompare(b.fullname || b.name || ''));
+    otherUsers.forEach(user => {
+      const option = document.createElement('option');
+      option.value = user.id;
+      const displayName = `${user.fullname || user.name || 'Unknown'} (${user.role || 'user'})`;
+      option.textContent = displayName;
+      option.dataset.name = displayName;
+      select.appendChild(option);
+    });
+    select.addEventListener('change', async e => {
+      if (e.target.value) {
+        const userId = e.target.value;
+        const userName = e.target.selectedOptions[0].dataset.name;
+        await startNewChat(userId, userName);
+        e.target.value = '';
+      }
+    });
+  } catch (err) {
+    console.error('Error loading users for chat:', err);
+  }
+}
+
+async function startNewChat(userId, userName) {
+  try {
+    const chatRoom = await getOrCreateChatRoom(userId, userName);
+    openChat(chatRoom.id, userId, userName);
+    await logActivity('Started new chat with user', userName, 'legal');
+  } catch (err) {
+    alert(`Error starting chat: ${err.message}`);
+  }
+}
+
+async function loadChatRooms() {
+  try {
+    const rooms = await api.get("/chat/rooms");
+    const chatList = document.getElementById('chat-list');
+    if (!chatList) return;
+    if (!rooms.length) {
+      chatList.innerHTML = '<div class="empty-chat-state">No chats yet. Start a new chat!</div>';
+      return;
+    }
+    chatList.innerHTML = '';
+    rooms.forEach(chat => chatList.appendChild(createChatListItem(chat.id, chat)));
+    if (currentChatId) {
+      document.querySelectorAll('.chat-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.dataset.chatId === currentChatId) item.classList.add('active');
+      });
+    }
+  } catch (err) {
+    console.error('Error loading chat rooms:', err);
+  }
+}
+
+function createChatListItem(chatId, chatData) {
+  const div = document.createElement('div');
+  div.className = 'chat-item';
+  div.dataset.chatId = chatId;
+  let otherParticipantId = null;
+  let otherParticipantName = 'Unknown';
+  if (chatData.participants) {
+    for (const [pid, pname] of Object.entries(chatData.participants)) {
+      if (pid !== currentUser.id) { otherParticipantId = pid; otherParticipantName = pname; break; }
+    }
+  }
+  div.dataset.recipientId = otherParticipantId;
+  div.dataset.recipientName = otherParticipantName;
+  const timeStr = chatData.last_message_time ? formatMessageTime(new Date(chatData.last_message_time)) : '';
+  div.innerHTML = `
+    <div class="chat-item-header">
+      <span class="chat-name">${otherParticipantName}</span>
+      <span class="chat-time">${timeStr}</span>
+    </div>
+    <div class="chat-preview">${chatData.last_message || 'No messages yet'}</div>
+  `;
+  div.addEventListener('click', () => openChat(chatId, otherParticipantId, otherParticipantName));
+  return div;
+}
+
+function formatMessageTime(timestamp) {
+  const now = new Date();
+  const messageDate = new Date(timestamp);
+  const diffMs = now - messageDate;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return messageDate.toLocaleDateString();
+}
+
+function openChat(chatId, recipientId, recipientName) {
+  currentChatId = chatId;
+  currentRecipient = { id: recipientId, name: recipientName };
+  const chatHeader = document.getElementById('chat-header');
+  const chatInputArea = document.getElementById('chat-input-area');
+  const chatMessages = document.getElementById('chat-messages');
+  const emptyChat = document.getElementById('empty-chat-state');
+  if (chatHeader) chatHeader.style.display = 'flex';
+  if (chatInputArea) chatInputArea.style.display = 'flex';
+  if (chatMessages) { chatMessages.style.display = 'block'; chatMessages.innerHTML = ''; }
+  if (emptyChat) emptyChat.style.display = 'none';
+  document.getElementById('recipient-name').textContent = recipientName;
+  document.getElementById('recipient-avatar').textContent = recipientName.charAt(0).toUpperCase();
+  document.querySelectorAll('.chat-item').forEach(item => {
+    item.classList.remove('active');
+    if (item.dataset.chatId === chatId) item.classList.add('active');
+  });
+  loadChatMessages(chatId);
+  if (chatPollInterval) clearInterval(chatPollInterval);
+  chatPollInterval = setInterval(() => loadChatMessages(chatId), 5000);
+}
+
+async function loadChatMessages(chatId) {
+  try {
+    const messages = await api.get(`/chat/rooms/${chatId}/messages`);
+    const container = document.getElementById('chat-messages');
+    if (!container) return;
+    container.innerHTML = '';
+    if (!messages.length) {
+      container.innerHTML = '<div class="empty-chat-state"><p>No messages yet. Start the conversation!</p></div>';
+      return;
+    }
+    messages.forEach(msg => container.appendChild(createMessageElement(msg)));
+    setTimeout(() => { container.scrollTop = container.scrollHeight; }, 100);
+  } catch (err) {
+    console.error('Error loading messages:', err);
+  }
+}
+
+function createMessageElement(message) {
+  const div = document.createElement('div');
+  const isSent = message.sender_id === currentUser.id;
+  const timeStr = new Date(message.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  div.className = `message ${isSent ? 'sent' : 'received'}`;
+  div.innerHTML = `<div class="message-content">${message.text}</div><div class="message-time">${timeStr}</div>`;
+  return div;
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chat-message-input');
+  if (!input) return;
+  const text = input.value.trim();
+  if (!text || !currentChatId || !currentRecipient) return;
+  try {
+    await api.post(`/chat/rooms/${currentChatId}/messages`, { text, recipientId: currentRecipient.id });
+    input.value = '';
+    input.style.height = 'auto';
+    document.getElementById('send-message-btn').disabled = true;
+    await loadChatMessages(currentChatId);
+    await logActivity('Sent message to user', currentRecipient.name, 'legal');
+  } catch (err) {
+    alert(`Error: ${err.message}`);
+  }
+}
+
+function initChat() {
+  if (!currentUser || !currentUser.id) return;
+  loadUsersForChat();
+  loadChatRooms();
+  const messageInput = document.getElementById('chat-message-input');
+  const sendBtn = document.getElementById('send-message-btn');
+  if (!messageInput || !sendBtn) return;
+  messageInput.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = this.scrollHeight + 'px';
+    sendBtn.disabled = !this.value.trim();
+  });
+  messageInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!sendBtn.disabled) sendMessage(); }
+  });
+  sendBtn.addEventListener('click', sendMessage);
+}
+</script>
+
+</body>
+</html>

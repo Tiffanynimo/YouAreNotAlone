@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Support Chatroom | You Are Not Alone</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #B68597, #DAB6C2, #F2E6EA);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  /* Login overlay */
+  #nickname-screen {
+    background: #F2E6EA;
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    width: 320px;
+  }
+  #nickname-screen h2 { color: #B68597; margin-bottom: 20px; }
+  #nickname-screen input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #DAB6C2;
+    background: #DAB6C2;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+    font-size: 1rem;
+  }
+  #nickname-screen button {
+    background: #B68597;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    width: 100%;
+    transition: 0.3s;
+  }
+  #nickname-screen button:hover { background: #9C6C7F; }
+
+  /* Main chat */
+  .chat-wrapper {
+    display: none;
+    width: 90%;
+    height: 90vh;
+    background: #DAB6C2;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  }
+  .chat-wrapper.visible { display: flex; }
+
+  .user-list {
+    width: 25%;
+    background: #F2E6EA;
+    padding: 20px;
+    box-sizing: border-box;
+    border-right: 3px solid #B68597;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .user-list h2 { color: #B68597; margin-bottom: 15px; }
+  .online-count { font-size: 0.8rem; color: #888; margin-bottom: 12px; }
+
+  .user-item {
+    padding: 12px;
+    background: #C79DAA;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .user-item:hover, .user-item.active {
+    background: #B68597;
+    color: white;
+  }
+  .user-item .dot {
+    width: 8px;
+    height: 8px;
+    background: #4caf50;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .chat-area {
+    width: 75%;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  .chat-title {
+    font-weight: bold;
+    color: #7a3e52;
+    margin-bottom: 8px;
+    font-size: 1rem;
+  }
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+    background: #F2E6EA;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+  }
+  .bubble {
+    margin: 10px 0;
+    background: #C79DAA;
+    padding: 12px 15px;
+    border-radius: 15px;
+    max-width: 70%;
+    position: relative;
+  }
+  .bubble.self {
+    background: #B68597;
+    color: white;
+    margin-left: auto;
+  }
+  .bubble .sender {
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #7a3e52;
+    margin-bottom: 4px;
+  }
+  .bubble.self .sender { color: #f8d7e1; }
+  .timestamp {
+    display: block;
+    font-size: 0.7rem;
+    color: #6b6b6b;
+    margin-top: 4px;
+    text-align: right;
+  }
+  .bubble.self .timestamp { color: #f0ccd6; }
+  .input-bar {
+    display: flex;
+    margin-top: 15px;
+  }
+  .input-bar input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    background: #DAB6C2;
+    margin-right: 10px;
+    font-size: 0.95rem;
+  }
+  .input-bar button {
+    background: #B68597;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    color: white;
+    font-weight: bold;
+    transition: 0.3s;
+  }
+  .input-bar button:hover { background: #9C6C7F; }
+
+  /* Private popup */
+  .private-popup {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    background: #F2E6EA;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    display: none;
+    flex-direction: column;
+    z-index: 1000;
+  }
+  .private-popup.open { display: flex; }
+  .private-header {
+    padding: 12px 16px;
+    background: #B68597;
+    color: white;
+    border-radius: 15px 15px 0 0;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .close-btn {
+    cursor: pointer;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.3);
+    user-select: none;
+  }
+  .private-messages {
+    height: 200px;
+    padding: 10px;
+    overflow-y: auto;
+  }
+  .private-input {
+    display: flex;
+    padding: 10px;
+    gap: 6px;
+  }
+  .private-input input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 10px;
+    border: none;
+    background: #DAB6C2;
+  }
+  .private-input button {
+    padding: 8px 12px;
+    background: #B68597;
+    border: none;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  .system-msg {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #888;
+    margin: 6px 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- Nickname entry screen -->
+<div id="nickname-screen">
+  <h2>Join Support Chatroom</h2>
+  <p style="color:#666; font-size:0.9rem; margin-bottom:20px;">
+    You are safe here. Enter a nickname to join the peer support chat.
+  </p>
+  <input id="nickname-input" type="text" placeholder="Your nickname (e.g. Hope)" maxlength="30" />
+  <button id="join-btn">Join Chat</button>
+</div>
+
+<!-- Main chat window -->
+<div class="chat-wrapper" id="chat-wrapper">
+  <div class="user-list">
+    <h2>Online Users</h2>
+    <div class="online-count" id="online-count">0 online</div>
+    <div id="user-list-items"></div>
+  </div>
+
+  <div class="chat-area">
+    <div class="chat-title" id="chat-title">Public Room</div>
+    <div class="messages" id="publicMessages"></div>
+    <div class="input-bar">
+      <input id="publicInput" placeholder="Type a message to everyone..." />
+      <button id="sendPublicBtn">Send</button>
+    </div>
+  </div>
+</div>
+
+<!-- Private chat popup -->
+<div class="private-popup" id="privatePopup">
+  <div class="private-header">
+    <span id="privateChatTitle">Private Chat</span>
+    <span class="close-btn" id="closePrivateBtn">✕</span>
+  </div>
+  <div class="private-messages" id="privateMessages"></div>
+  <div class="private-input">
+    <input id="privateInput" placeholder="Message..." />
+    <button id="sendPrivateBtn">Send</button>
+  </div>
+</div>
+
+<!-- Socket.IO client (served by the Node.js server) -->
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+
+  let myNickname = "";
+  let privateChatTarget = null;
+
+  function formatTime(isoString) {
+    return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  }
+
+  // ── Join ──────────────────────────────────────────────────────────────────
+  document.getElementById("join-btn").addEventListener("click", joinChat);
+  document.getElementById("nickname-input").addEventListener("keydown", e => {
+    if (e.key === "Enter") joinChat();
+  });
+
+  function joinChat() {
+    const val = document.getElementById("nickname-input").value.trim();
+    if (!val) return;
+    myNickname = val;
+
+    document.getElementById("nickname-screen").style.display = "none";
+    document.getElementById("chat-wrapper").classList.add("visible");
+
+    socket.emit("join", { nickname: myNickname });
+
+    addSystemMessage(`You joined as <strong>${myNickname}</strong>`);
+  }
+
+  // ── Online users list ─────────────────────────────────────────────────────
+  socket.on("online-users", (users) => {
+    const container = document.getElementById("user-list-items");
+    const countEl   = document.getElementById("online-count");
+    countEl.textContent = `${users.length} online`;
+    container.innerHTML = "";
+
+    users.forEach(u => {
+      const div = document.createElement("div");
+      div.className = "user-item" + (u.nickname === privateChatTarget ? " active" : "");
+      div.innerHTML = `<span class="dot"></span>${u.nickname}`;
+
+      if (u.nickname !== myNickname) {
+        div.title = `Click to private message ${u.nickname}`;
+        div.addEventListener("click", () => openPrivateChat(u.nickname));
+      } else {
+        div.style.fontStyle = "italic";
+        div.title = "You";
+      }
+      container.appendChild(div);
+    });
+  });
+
+  // ── Public chat ───────────────────────────────────────────────────────────
+  document.getElementById("sendPublicBtn").addEventListener("click", sendPublic);
+  document.getElementById("publicInput").addEventListener("keydown", e => {
+    if (e.key === "Enter") sendPublic();
+  });
+
+  function sendPublic() {
+    const input = document.getElementById("publicInput");
+    const text = input.value.trim();
+    if (!text) return;
+    socket.emit("public-message", { nickname: myNickname, text });
+    input.value = "";
+  }
+
+  socket.on("public-message", ({ nickname, text, timestamp }) => {
+    const box = document.createElement("div");
+    box.className = "bubble" + (nickname === myNickname ? " self" : "");
+    box.innerHTML = `
+      <div class="sender">${nickname === myNickname ? "You" : nickname}</div>
+      ${text}
+      <span class="timestamp">${formatTime(timestamp)}</span>
+    `;
+    const msgs = document.getElementById("publicMessages");
+    msgs.appendChild(box);
+    msgs.scrollTop = msgs.scrollHeight;
+  });
+
+  // ── Private chat ──────────────────────────────────────────────────────────
+  function openPrivateChat(targetNickname) {
+    privateChatTarget = targetNickname;
+    document.getElementById("privateChatTitle").textContent = targetNickname;
+    document.getElementById("privateMessages").innerHTML = "";
+    document.getElementById("privatePopup").classList.add("open");
+    document.getElementById("privateInput").focus();
+
+    // Highlight selected user
+    document.querySelectorAll(".user-item").forEach(el => {
+      el.classList.toggle("active", el.textContent.trim() === targetNickname);
+    });
+  }
+
+  document.getElementById("closePrivateBtn").addEventListener("click", () => {
+    document.getElementById("privatePopup").classList.remove("open");
+    privateChatTarget = null;
+    document.querySelectorAll(".user-item").forEach(el => el.classList.remove("active"));
+  });
+
+  document.getElementById("sendPrivateBtn").addEventListener("click", sendPrivate);
+  document.getElementById("privateInput").addEventListener("keydown", e => {
+    if (e.key === "Enter") sendPrivate();
+  });
+
+  function sendPrivate() {
+    const input = document.getElementById("privateInput");
+    const text = input.value.trim();
+    if (!text || !privateChatTarget) return;
+    socket.emit("private-message", {
+      toNickname: privateChatTarget,
+      fromNickname: myNickname,
+      text,
+    });
+    input.value = "";
+  }
+
+  socket.on("private-message", ({ from, to, text, timestamp, isSelf }) => {
+    const container = document.getElementById("privateMessages");
+
+    // If incoming from someone else and popup is not open for them, open it
+    if (!isSelf && from !== myNickname) {
+      if (privateChatTarget !== from) {
+        openPrivateChat(from);
+      }
+    }
+
+    const bubble = document.createElement("div");
+    bubble.className = "bubble" + (isSelf ? " self" : "");
+    bubble.innerHTML = `
+      <div class="sender">${isSelf ? "You" : from}</div>
+      ${text}
+      <span class="timestamp">${formatTime(timestamp)}</span>
+    `;
+    container.appendChild(bubble);
+    container.scrollTop = container.scrollHeight;
+  });
+
+  // ── System messages ───────────────────────────────────────────────────────
+  function addSystemMessage(html) {
+    const div = document.createElement("div");
+    div.className = "system-msg";
+    div.innerHTML = html;
+    const msgs = document.getElementById("publicMessages");
+    msgs.appendChild(div);
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+</script>
+
+</body>
+</html>

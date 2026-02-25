@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>You Are Not Alone — Therapist Dashboard</title>
+  <link rel="stylesheet" href="therapist.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <nav class="top-nav" role="banner">
+    <div class="left">
+      <img src="logo.png" alt="logo" class="logo" />
+      <div class="title">
+        <h1>You Are Not Alone</h1>
+        <p>Therapist</p>
+      </div>
+    </div>
+
+    <div class="center">
+      <span class="crisis-label">Crisis 24/7 1-800-656-4673</span>
+    </div>
+
+    <div class="right">
+      <div class="user-info">
+        <p class="user-name">Loading...</p>
+        <p class="user-email">Loading...</p>
+      </div>
+      <button class="signout-btn">Sign Out</button>
+    </div>
+  </nav>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="Primary navigation">
+      <nav class="sidebar-nav">
+        <a href="#" class="sidebar-item active"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+        <a href="#patients" class="sidebar-item"><i class="fa-solid fa-users"></i><span>Patients</span></a>
+        <a href="#sessions" class="sidebar-item"><i class="fa-solid fa-calendar-days"></i><span>Sessions</span></a>
+        <a href="#notes" class="sidebar-item"><i class="fa-solid fa-file-lines"></i><span>Notes</span></a>
+        <a href="#chat" class="sidebar-item"><i class="fa-solid fa-comments"></i><span>Messages</span></a>
+        <a href="#profile" class="sidebar-item"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+      </nav>
+    </aside>
+
+    <main class="main" role="main">
+      <h1 class="dashboard-title">Therapist Dashboard</h1>
+
+      <!-- Stats Section -->
+      <section class="stats">
+        <article class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-calendar-days"></i></div>
+          <div class="stat-body">
+            <div class="stat-value">0</div>
+            <div class="stat-label">Upcoming Sessions</div>
+          </div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+          <div class="stat-body">
+            <div class="stat-value">0</div>
+            <div class="stat-label">Active Patients</div>
+          </div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-icon"><i class="fa-solid fa-file-medical"></i></div>
+          <div class="stat-body">
+            <div class="stat-value">0</div>
+            <div class="stat-label">Notes Today</div>
+          </div>
+        </article>
+      </section>
+
+      <!-- Patients Section -->
+      <section id="patients" class="panel">
+        <h3>Patients</h3>
+        <div class="panel-body">
+          <div class="panel-controls">
+            <input type="search" placeholder="Search patients..." />
+            <button class="btn">+ Add Patient</button>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Contact</th>
+                <th>Last Session</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="empty-row">
+                <td colspan="4" class="empty-note">No patients added yet</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Sessions Section -->
+      <section id="sessions" class="panel">
+        <h3>Sessions</h3>
+        <div class="panel-body">
+          <div class="panel-controls">
+            <select id="session-filter">
+              <option value="">All</option>
+              <option value="pending">Pending</option>
+              <option value="scheduled">Scheduled</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <ul class="session-list" id="sessions-list">
+            <li class="empty-note">Loading sessions...</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Notes Section -->
+      <section id="notes" class="panel">
+        <h3>Notes</h3>
+        <div class="panel-body">
+          <form class="note-form">
+            <label for="notePatient">Patient</label>
+            <input id="notePatient" type="text" placeholder="Patient name" />
+            <label for="noteText">Note</label>
+            <textarea id="noteText" rows="4" placeholder="Write session notes..."></textarea>
+            <div class="form-actions">
+              <button type="submit" class="btn primary">Save Note</button>
+              <button type="button" class="btn">Clear</button>
+            </div>
+          </form>
+
+          <!-- Notes list container -->
+          <div id="notesList" class="notes-list"></div>
+        </div>
+      </section>
+
+      <!-- Messages Section -->
+      <section id="chat" class="panel">
+        <h3>Messages</h3>
+        <div class="panel-body">
+          <div class="chat-container">
+            <!-- Chat Sidebar -->
+            <div class="chat-sidebar">
+              <div class="chat-list-header">
+                <h4>Chats</h4>
+                <input type="text" id="search-chats" class="search-chats" placeholder="Search chats...">
+              </div>
+              <div class="chat-list" id="chat-list">
+                <div class="empty-chat-state">Loading chats...</div>
+              </div>
+              <div class="start-new-chat">
+                <select id="new-chat-select" class="new-chat-select">
+                  <option value="" disabled selected>Start new chat...</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Chat Main Area -->
+            <div class="chat-main">
+              <div class="chat-header" id="chat-header" style="display: none;">
+                <div class="chat-recipient">
+                  <div class="chat-recipient-avatar" id="recipient-avatar">U</div>
+                  <div>
+                    <h4 id="recipient-name">User Name</h4>
+                    <small id="recipient-status">Online</small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="chat-messages" id="chat-messages">
+                <div class="empty-chat">
+                  <i class="fa-solid fa-comment-dots"></i>
+                  <h4>Select a chat to start messaging</h4>
+                  <p>Choose a user from the list to begin your conversation</p>
+                </div>
+              </div>
+
+              <div class="chat-input-area" id="chat-input-area" style="display: none;">
+                <textarea id="chat-message-input" placeholder="Type your message..." rows="1"></textarea>
+                <button id="send-message-btn" disabled>Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="dashboard-footer">
+        <p class="help-text">You are not alone. Help is available 24/7.</p>
+      </footer>
+    </main>
+  </div>
+
+<script type="module">
+import { requireSession, signOutAndRedirect, redirectToDashboard } from "../lib/auth-client.js";
+import { api, logActivity } from "../lib/api.js";
+
+const userNameEl = document.querySelector(".user-name");
+const userEmailEl = document.querySelector(".user-email");
+
+let currentUser = null;
+let currentUserData = null;
+
+// ===================== AUTH & INITIALIZATION =====================
+async function init() {
+  const session = await requireSession();
+  currentUser = session.user;
+  currentUserData = session.user;
+
+  // Role check
+  if (currentUser.role !== "therapist") {
+    redirectToDashboard(currentUser.role);
+    return;
+  }
+
+  userNameEl.textContent = currentUser.fullname || currentUser.name;
+  userEmailEl.textContent = currentUser.email;
+
+  await logActivity("Accessed therapist dashboard", null, "therapist");
+  loadNotes();
+  loadSessions();
+  initChat();
+}
+
+// ===================== SESSIONS (APPOINTMENTS) =====================
+async function loadSessions() {
+  const sessionsList = document.getElementById("sessions-list");
+  try {
+    const appointments = await api.get("/appointments?professionalType=therapist");
+    const myAppointments = appointments.filter(a =>
+      a.professional_id === currentUser.id || a.status === "pending"
+    );
+
+    // Update stat cards
+    const upcoming = myAppointments.filter(a => a.status === "scheduled").length;
+    const patients = new Set(myAppointments.filter(a => a.status === "scheduled").map(a => a.survivor_id)).size;
+    const statValues = document.querySelectorAll(".stat-value");
+    if (statValues[0]) statValues[0].textContent = upcoming;
+    if (statValues[1]) statValues[1].textContent = patients;
+
+    const filter = document.getElementById("session-filter")?.value || "";
+    const filtered = filter ? myAppointments.filter(a => a.status === filter) : myAppointments;
+
+    sessionsList.innerHTML = "";
+    if (!filtered.length) {
+      sessionsList.innerHTML = "<li class='empty-note'>No sessions found</li>";
+      return;
+    }
+
+    filtered.forEach(appt => {
+      const date = appt.date ? new Date(appt.date).toLocaleString() : "TBD";
+      const li = document.createElement("li");
+      li.className = `session-item status-${appt.status}`;
+      li.innerHTML = `
+        <div class="session-info">
+          <strong>${appt.user_name || "Anonymous"}</strong>
+          <span class="status-badge">${appt.status.toUpperCase()}</span>
+        </div>
+        <div class="session-meta">
+          <span><i class="fa-solid fa-calendar"></i> ${date}</span>
+          ${appt.reason ? `<span><i class="fa-solid fa-note-sticky"></i> ${appt.reason}</span>` : ""}
+        </div>
+        ${appt.status === "pending" ? `
+          <div class="session-actions">
+            <button class="btn approve-session" data-id="${appt.id}">Accept</button>
+            <button class="btn decline-session" data-id="${appt.id}">Decline</button>
+          </div>` : ""}
+        ${appt.status === "scheduled" ? `
+          <div class="session-actions">
+            <button class="btn complete-session" data-id="${appt.id}">Mark Completed</button>
+          </div>` : ""}
+      `;
+      sessionsList.appendChild(li);
+    });
+
+    // Action listeners
+    document.querySelectorAll(".approve-session").forEach(btn => {
+      btn.onclick = async () => {
+        await api.put(`/appointments/${btn.dataset.id}/approve`);
+        await logActivity("Accepted appointment", btn.dataset.id, "therapist");
+        loadSessions();
+      };
+    });
+    document.querySelectorAll(".decline-session").forEach(btn => {
+      btn.onclick = async () => {
+        await api.put(`/appointments/${btn.dataset.id}/decline`);
+        await logActivity("Declined appointment", btn.dataset.id, "therapist");
+        loadSessions();
+      };
+    });
+    document.querySelectorAll(".complete-session").forEach(btn => {
+      btn.onclick = async () => {
+        await api.put(`/appointments/${btn.dataset.id}/complete`);
+        await logActivity("Completed appointment", btn.dataset.id, "therapist");
+        loadSessions();
+      };
+    });
+  } catch (err) {
+    console.error("Error loading sessions:", err);
+    sessionsList.innerHTML = "<li class='empty-note'>Error loading sessions</li>";
+  }
+}
+
+document.getElementById("session-filter")?.addEventListener("change", loadSessions);
+
+init();
+
+document.querySelector(".signout-btn").addEventListener("click", async () => {
+  await logActivity("Signed out", null, "therapist");
+  signOutAndRedirect();
+});
+
+// ===================== NOTES SYSTEM =====================
+document.querySelector(".note-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const patientName = document.getElementById("notePatient").value.trim();
+  const noteText = document.getElementById("noteText").value.trim();
+  if (!patientName || !noteText) return alert("Please fill in all fields.");
+
+  try {
+    const note = await api.post("/notes", { patientName, noteText });
+    document.querySelector(".note-form").reset();
+    alert("Note saved successfully!");
+    loadNotes();
+  } catch (err) {
+    console.error(err);
+    alert("Failed to save note.");
+  }
+});
+
+async function loadNotes() {
+  const notesList = document.getElementById("notesList");
+  try {
+    const notes = await api.get("/notes");
+    notesList.innerHTML = "";
+    if (!notes.length) {
+      notesList.innerHTML = "<p class='empty-note'>No notes saved yet.</p>";
+      return;
+    }
+    notes.forEach(note => {
+      const div = document.createElement("div");
+      div.className = "note-card";
+      div.innerHTML = `
+        <strong>Patient:</strong> ${note.patient_name}<br>
+        <strong>Note:</strong> ${note.note_text}<br>
+        <small>${new Date(note.created_at).toLocaleString()}</small>
+        <div class="note-actions">
+          <button class="btn edit-note" data-id="${note.id}">Edit</button>
+          <button class="btn delete-note" data-id="${note.id}">Delete</button>
+        </div>
+      `;
+      notesList.appendChild(div);
+    });
+    attachNoteActions();
+  } catch (err) {
+    console.error(err);
+    notesList.innerHTML = "<p class='empty-note'>Error loading notes.</p>";
+  }
+}
+
+function attachNoteActions() {
+  document.querySelectorAll(".delete-note").forEach(btn => {
+    btn.onclick = async () => {
+      if (!confirm("Delete this note?")) return;
+      await api.delete("/notes/" + btn.dataset.id);
+      loadNotes();
+    };
+  });
+  document.querySelectorAll(".edit-note").forEach(btn => {
+    btn.onclick = async () => {
+      const newText = prompt("Enter updated note text:");
+      if (!newText) return;
+      await api.put("/notes/" + btn.dataset.id, { noteText: newText });
+      loadNotes();
+    };
+  });
+}
+
+// ===================== CHAT SYSTEM =====================
+let currentChatId = null;
+let currentRecipient = null;
+let chatPollInterval = null;
+
+async function getOrCreateChatRoom(userId, userName) {
+  const participants = [currentUser.id, userId].sort();
+  const chatRoomId = participants.join('_');
+
+  try {
+    const rooms = await api.get("/chat/rooms");
+    const existing = rooms.find(r => r.id === chatRoomId);
+    if (existing) return existing;
+  } catch (e) {}
+
+  const room = await api.post("/chat/rooms", {
+    recipientId: userId,
+    recipientName: userName
+  });
+  return room;
+}
+
+async function loadUsersForChat() {
+  try {
+    const users = await api.get("/users");
+    const select = document.getElementById('new-chat-select');
+    if (!select) return;
+
+    select.innerHTML = '<option value="" disabled selected>Start new chat...</option>';
+
+    const otherUsers = users.filter(u => u.id !== currentUser.id);
+    otherUsers.sort((a, b) => (a.fullname || a.name || '').localeCompare(b.fullname || b.name || ''));
+
+    otherUsers.forEach(user => {
+      const option = document.createElement('option');
+      option.value = user.id;
+      const displayName = `${user.fullname || user.name || 'Unknown'} (${user.role || 'user'})`;
+      option.textContent = displayName;
+      option.dataset.name = displayName;
+      select.appendChild(option);
+    });
+
+    select.addEventListener('change', async e => {
+      if (e.target.value) {
+        const userId = e.target.value;
+        const userName = e.target.selectedOptions[0].dataset.name;
+        await startNewChat(userId, userName);
+        e.target.value = '';
+      }
+    });
+  } catch (err) {
+    console.error('Error loading users for chat:', err);
+  }
+}
+
+async function startNewChat(userId, userName) {
+  try {
+    const chatRoom = await getOrCreateChatRoom(userId, userName);
+    openChat(chatRoom.id, userId, userName);
+    await logActivity('Started new chat with user', userName, 'therapist');
+  } catch (err) {
+    console.error('Error starting new chat:', err);
+    alert(`Error starting chat: ${err.message}`);
+  }
+}
+
+async function loadChatRooms() {
+  try {
+    const rooms = await api.get("/chat/rooms");
+    const chatList = document.getElementById('chat-list');
+    if (!chatList) return;
+
+    if (!rooms.length) {
+      chatList.innerHTML = '<div class="empty-chat-state">No chats yet. Start a new chat!</div>';
+      return;
+    }
+
+    chatList.innerHTML = '';
+    rooms.forEach(chat => {
+      const chatItem = createChatListItem(chat.id, chat);
+      chatList.appendChild(chatItem);
+    });
+
+    if (currentChatId) {
+      document.querySelectorAll('.chat-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.dataset.chatId === currentChatId) item.classList.add('active');
+      });
+    }
+  } catch (err) {
+    console.error('Error loading chat rooms:', err);
+  }
+}
+
+function createChatListItem(chatId, chatData) {
+  const div = document.createElement('div');
+  div.className = 'chat-item';
+  div.dataset.chatId = chatId;
+
+  let otherParticipantId = null;
+  let otherParticipantName = 'Unknown';
+  if (chatData.participants) {
+    for (const [participantId, participantName] of Object.entries(chatData.participants)) {
+      if (participantId !== currentUser.id) {
+        otherParticipantId = participantId;
+        otherParticipantName = participantName;
+        break;
+      }
+    }
+  }
+
+  div.dataset.recipientId = otherParticipantId;
+  div.dataset.recipientName = otherParticipantName;
+
+  const timeStr = chatData.last_message_time ? formatMessageTime(new Date(chatData.last_message_time)) : '';
+
+  div.innerHTML = `
+    <div class="chat-item-header">
+      <span class="chat-name">${otherParticipantName}</span>
+      <span class="chat-time">${timeStr}</span>
+    </div>
+    <div class="chat-preview">${chatData.last_message || 'No messages yet'}</div>
+  `;
+
+  div.addEventListener('click', () => openChat(chatId, otherParticipantId, otherParticipantName));
+  return div;
+}
+
+function formatMessageTime(timestamp) {
+  const now = new Date();
+  const messageDate = new Date(timestamp);
+  const diffMs = now - messageDate;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return messageDate.toLocaleDateString();
+}
+
+function openChat(chatId, recipientId, recipientName) {
+  currentChatId = chatId;
+  currentRecipient = { id: recipientId, name: recipientName };
+
+  const chatHeader = document.getElementById('chat-header');
+  const chatInputArea = document.getElementById('chat-input-area');
+  const chatMessages = document.getElementById('chat-messages');
+
+  if (chatHeader) chatHeader.style.display = 'flex';
+  if (chatInputArea) chatInputArea.style.display = 'flex';
+  if (chatMessages) chatMessages.innerHTML = '';
+
+  document.getElementById('recipient-name').textContent = recipientName;
+  document.getElementById('recipient-avatar').textContent = recipientName.charAt(0).toUpperCase();
+
+  document.querySelectorAll('.chat-item').forEach(item => {
+    item.classList.remove('active');
+    if (item.dataset.chatId === chatId) item.classList.add('active');
+  });
+
+  const emptyChat = document.querySelector('.empty-chat');
+  if (emptyChat) emptyChat.style.display = 'none';
+
+  loadChatMessages(chatId);
+
+  if (chatPollInterval) clearInterval(chatPollInterval);
+  chatPollInterval = setInterval(() => loadChatMessages(chatId), 5000);
+}
+
+async function loadChatMessages(chatId) {
+  try {
+    const messages = await api.get(`/chat/rooms/${chatId}/messages`);
+    const messagesContainer = document.getElementById('chat-messages');
+    if (!messagesContainer) return;
+
+    messagesContainer.innerHTML = '';
+
+    if (!messages.length) {
+      messagesContainer.innerHTML = '<div class="empty-chat-state"><p>No messages yet. Start the conversation!</p></div>';
+      return;
+    }
+
+    messages.forEach(message => {
+      const el = createMessageElement(message);
+      messagesContainer.appendChild(el);
+    });
+
+    setTimeout(() => {
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }, 100);
+  } catch (err) {
+    console.error('Error loading messages:', err);
+  }
+}
+
+function createMessageElement(message) {
+  const div = document.createElement('div');
+  const isSent = message.sender_id === currentUser.id;
+  const messageTime = new Date(message.created_at);
+  const timeStr = messageTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+  div.className = `message ${isSent ? 'sent' : 'received'}`;
+  div.innerHTML = `
+    <div class="message-content">${message.text}</div>
+    <div class="message-time">${timeStr}</div>
+  `;
+  return div;
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chat-message-input');
+  if (!input) return;
+
+  const text = input.value.trim();
+  if (!text || !currentChatId || !currentRecipient) return;
+
+  try {
+    await api.post(`/chat/rooms/${currentChatId}/messages`, {
+      text,
+      recipientId: currentRecipient.id
+    });
+
+    input.value = '';
+    input.style.height = 'auto';
+    document.getElementById('send-message-btn').disabled = true;
+
+    await loadChatMessages(currentChatId);
+    await logActivity('Sent message to user', currentRecipient.name, 'therapist');
+  } catch (err) {
+    console.error('Error sending message:', err);
+    alert(`Error: ${err.message}`);
+  }
+}
+
+function initChat() {
+  if (!currentUser || !currentUser.id) return;
+
+  loadUsersForChat();
+  loadChatRooms();
+
+  const messageInput = document.getElementById('chat-message-input');
+  const sendBtn = document.getElementById('send-message-btn');
+
+  if (!messageInput || !sendBtn) return;
+
+  messageInput.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = this.scrollHeight + 'px';
+    sendBtn.disabled = !this.value.trim();
+  });
+
+  messageInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (!sendBtn.disabled) sendMessage();
+    }
+  });
+
+  sendBtn.addEventListener('click', sendMessage);
+}
+</script>
+
+</body>
+</html>

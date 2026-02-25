@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>You Are Not Alone — Your Safe Space</title>
+
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="survivor.css" />
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav" role="banner">
+    <div class="left">
+      <img src="logo.png" alt="You Are Not Alone logo" class="logo" />
+      <div class="title">
+        <h1>You Are Not Alone</h1>
+        <p>Safe Space</p>
+      </div>
+    </div>
+
+    <div class="center">
+      <span class="crisis-label">Crisis 24/7 1-800-656-4673</span>
+    </div>
+
+    <div class="right">
+      <div class="user-info">
+        <p class="user-name">Loading...</p>
+        <p class="user-email">Loading...</p>
+      </div>
+      <button class="signout-btn">Sign Out</button>
+    </div>
+  </nav>
+
+  <!-- Layout: Sidebar + Main -->
+  <div class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" aria-label="Primary navigation">
+      <nav class="sidebar-nav">
+        <a href="#dashboard" class="sidebar-item active" data-section="dashboard"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+        <a href="#notifications" class="sidebar-item" data-section="notifications"><i class="fa-solid fa-bell"></i><span>Notifications</span><span class="notification-badge" id="notification-badge" style="display:none;">0</span></a>
+        <a href="#report" class="sidebar-item" data-section="report"><i class="fa-solid fa-flag"></i><span>Report Incident</span></a>
+        <a href="#appointments" class="sidebar-item" data-section="appointments"><i class="fa-solid fa-calendar-days"></i><span>Appointments</span></a>
+        <a href="#resources" class="sidebar-item" data-section="resources"><i class="fa-solid fa-book"></i><span>Support Resources</span></a>
+        <a href="#messages" class="sidebar-item" data-section="messages"><i class="fa-solid fa-message"></i><span>Messages</span></a>
+        <a href="#profile" class="sidebar-item" data-section="profile"><i class="fa-solid fa-user"></i><span>Profile</span></a>
+      </nav>
+    </aside>
+
+    <!-- Main Dashboard -->
+    <main class="main" role="main">
+
+      <!-- DASHBOARD SECTION -->
+      <section id="dashboard-section" class="main-section active">
+        <header class="hero">
+          <h2 class="hero-title">Your Safe Space</h2>
+          <p class="hero-sub">
+            Welcome to Your Safe Space. You are brave, you are strong, and you are not alone.
+            This is a judgment-free space designed to support you on your healing journey.
+          </p>
+          <p class="hero-help">
+            If you need immediate help call the 24/7 National Sexual Assault Hotline at
+            <strong>1-800-656-4673</strong>
+          </p>
+        </header>
+
+        <!-- Quick stats -->
+        <section class="stats">
+          <article class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-calendar-days"></i></div>
+            <div class="stat-body">
+              <div class="stat-value" id="upcoming-count">0</div>
+              <div class="stat-label">Upcoming Appointments</div>
+            </div>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-flag"></i></div>
+            <div class="stat-body">
+              <div class="stat-value" id="reports-count">0</div>
+              <div class="stat-label">Reports Submitted</div>
+            </div>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-book"></i></div>
+            <div class="stat-body">
+              <div class="stat-value" id="resources-count">0</div>
+              <div class="stat-label">Support Resources</div>
+            </div>
+          </article>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="panel quick-actions">
+          <h3>Quick Actions</h3>
+          <div class="action-buttons">
+            <button class="action-btn" data-section="report"><i class="fa-solid fa-flag"></i> Report Incident</button>
+            <button class="action-btn" data-section="resources"><i class="fa-solid fa-book"></i> View Resources</button>
+            <button class="action-btn" data-section="appointments"><i class="fa-solid fa-calendar-days"></i> View Appointments</button>
+            <button class="action-btn" data-section="messages"><i class="fa-solid fa-message"></i> Messages</button>
+            <button class="action-btn" data-section="profile"><i class="fa-solid fa-user"></i> My Profile</button>
+          </div>
+        </section>
+
+        <!-- Support Contacts -->
+        <section class="panel">
+  <h3>Support Resources</h3>
+  <ul>
+    <li>
+      <a
+        href="../Articles/articles.html"
+        style="color:#C2185B; font-weight:bold; text-decoration:none;">
+        📚 Healing Articles & Resources
+      </a>
+    </li>
+  </ul>
+</section>
+
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+          <p class="help-text">You are not alone. Help is available 24/7.</p>
+        </footer>
+      </section>
+
+      <!-- REPORT INCIDENT SECTION -->
+      <section id="report-section" class="main-section">
+        <h2>Report Incident</h2>
+        <div class="panel">
+          <form id="report-form" class="report-form">
+            <div class="form-group">
+              <label for="report-type">Report Type *</label>
+              <select id="report-type" required>
+                <option value="">-- Select Report Type --</option>
+                <option value="assault">Sexual Assault</option>
+                <option value="harassment">Harassment</option>
+                <option value="discrimination">Discrimination</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="report-description">Description *</label>
+              <textarea id="report-description" rows="6" placeholder="Please describe what happened. Include details like date, location, and any relevant context." required></textarea>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn primary">Submit Report</button>
+              <button type="reset" class="btn">Clear</button>
+            </div>
+          </form>
+          <div id="report-message" class="message" style="display: none;"></div>
+        </div>
+      </section>
+
+      <!-- APPOINTMENTS SECTION -->
+      <section id="appointments-section" class="main-section">
+        <h2>My Appointments</h2>
+
+        <!-- Schedule New Appointment -->
+        <div class="panel">
+          <h3>Schedule New Appointment</h3>
+          <form id="schedule-appointment-form" class="appointment-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="appointment-type">Professional Type *</label>
+                <select id="appointment-type" required>
+                  <option value="">-- Select Professional --</option>
+                  <option value="therapist">Therapist</option>
+                  <option value="medical">Medical Practitioner</option>
+                  <option value="legal">Legal Representative</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="appointment-date">Date *</label>
+                <input type="datetime-local" id="appointment-date" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="appointment-reason">Reason for Appointment *</label>
+                <input type="text" id="appointment-reason" placeholder="e.g., Initial consultation, Follow-up, Legal advice" required>
+              </div>
+
+              <div class="form-group">
+                <label for="appointment-notes">Additional Notes</label>
+                <textarea id="appointment-notes" rows="3" placeholder="Any additional information you'd like to share..."></textarea>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn primary">Request Appointment</button>
+              <button type="reset" class="btn">Clear</button>
+            </div>
+          </form>
+          <div id="schedule-message" class="message" style="display: none;"></div>
+        </div>
+
+        <!-- View Appointments -->
+        <div class="panel">
+          <h3>Your Appointments</h3>
+          <ul id="appointments-list" class="appointments-list">
+            <li class="empty-note">Loading appointments...</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- RESOURCES SECTION -->
+      <section id="resources-section" class="main-section">
+  <h2>Support Resources</h2>
+  <div class="panel">
+    <ul id="resources-list" class="resources-list">
+      <li>
+        <a
+          href="../Articles/articles.html"
+          style="color:#C2185B; font-weight:bold; text-decoration:none;"
+        >
+          📚 Healing Articles & Resources
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+
+      <!-- MESSAGES SECTION -->
+      <section id="messages-section" class="main-section">
+        <h2>Messages</h2>
+        <div class="panel">
+          <div class="chat-container">
+            <!-- Chat Sidebar -->
+            <div class="chat-sidebar">
+              <div class="chat-list-header">
+                <h3>Chats</h3>
+                <input type="text" id="search-chats" class="search-chats" placeholder="Search chats...">
+              </div>
+              <div class="chat-list" id="chat-list">
+                <div class="empty-chat-state">Loading chats...</div>
+              </div>
+              <div class="start-new-chat">
+                <select id="new-chat-select" class="new-chat-select">
+                  <option value="" disabled selected>Start new chat...</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Chat Main Area -->
+            <div class="chat-main">
+              <div class="chat-header" id="chat-header" style="display: none;">
+                <div class="chat-recipient">
+                  <div class="chat-recipient-avatar" id="recipient-avatar">T</div>
+                  <div>
+                    <h4 id="recipient-name">User Name</h4>
+                    <small id="recipient-status">Online</small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="chat-messages" id="chat-messages">
+                <div class="empty-chat">
+                  <i class="fa-solid fa-comment-dots"></i>
+                  <h3>Select a chat to start messaging</h3>
+                  <p>Choose a user from the list to begin your conversation</p>
+                </div>
+              </div>
+
+              <div class="chat-input-area" id="chat-input-area" style="display: none;">
+                <textarea id="chat-message-input" placeholder="Type your message..." rows="1"></textarea>
+                <button id="send-message-btn" disabled>Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- NOTIFICATIONS SECTION -->
+      <section id="notifications-section" class="main-section">
+        <h2>Notifications</h2>
+        <div class="panel">
+          <div class="notification-filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="unread">Unread</button>
+            <button class="filter-btn" data-filter="appointment">Appointment Updates</button>
+          </div>
+          <div id="notifications-list" class="notifications-list">
+            <p class="empty-state">No notifications yet. Your appointment updates will appear here.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROFILE SECTION -->
+      <section id="profile-section" class="main-section">
+        <h2>My Profile</h2>
+        <div class="panel profile-panel">
+          <form id="profile-form" class="profile-form">
+            <div class="form-group">
+              <label for="profile-fullname">Full Name</label>
+              <input type="text" id="profile-fullname" placeholder="Enter your full name">
+            </div>
+
+            <div class="form-group">
+              <label for="profile-email">Email</label>
+              <input type="email" id="profile-email" placeholder="Enter your email" disabled>
+            </div>
+
+            <div class="form-group">
+              <label for="profile-phone">Phone Number</label>
+              <input type="tel" id="profile-phone" placeholder="Enter your phone number">
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="btn primary">Save Changes</button>
+              <button type="button" class="btn" id="cancel-edit">Cancel</button>
+            </div>
+          </form>
+          <div id="profile-message" class="message" style="display: none;"></div>
+        </div>
+      </section>
+
+        <!-- Find Medical Centres -->
+<section class="panel map-panel" aria-labelledby="map-heading">
+  <h3 id="map-heading">Find medical centres near you</h3>
+
+  <!-- Search / locate controls -->
+  <div class="map-controls">
+    <button id="use-location-btn" class="btn">Use my location</button>
+
+    <form id="address-form" class="address-form" autocomplete="off">
+      <label for="address-input">Or enter your location</label>
+      <div class="address-row">
+        <input
+          id="address-input"
+          type="text"
+          placeholder="e.g., Mwiki, Kiambu"
+          aria-label="Enter your location"
+          required
+        />
+        <button type="submit" class="btn">Search</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Map container -->
+  <div id="map" style="height: 420px; border-radius: 8px; overflow: hidden;"></div>
+
+  <!-- Results list -->
+  <div id="results" class="results" aria-live="polite"></div>
+</section>
+
+        <!-- Footer -->
+      <footer class="dashboard-footer">
+        <p class="help-text">You are not alone. Help is available 24/7.</p>
+      </footer>
+    </main>
+  </div>
+
+    </main>
+  </div>
+  <script type="module">
+// ===== IMPORTS =====
+import { requireSession, signOutAndRedirect, redirectToDashboard } from "../lib/auth-client.js";
+import { api, logActivity } from "../lib/api.js";
+
+// ===== UI ELEMENTS =====
+const userNameEl = document.querySelector('.user-name');
+const userEmailEl = document.querySelector('.user-email');
+let currentUser = null;
+let currentUserData = null;
+
+// Default loading states
+userNameEl.textContent = 'Loading...';
+userEmailEl.textContent = 'Loading...';
+
+const allowedRoles = ['survivor', 'anonymous'];
+
+// ===== LOAD SURVIVOR DATA =====
+async function loadSurvivor(session) {
+  try {
+    const user = session.user;
+    currentUser = user;
+
+    // Check if user has allowed role
+    if (!allowedRoles.includes(user.role)) {
+      alert('Unauthorized access. Redirecting to your dashboard.');
+      redirectToDashboard(user.role);
+      return null;
+    }
+
+    // Update UI with user info
+    userNameEl.textContent = user.fullname || user.name || 'User';
+    userEmailEl.textContent = user.email;
+
+    currentUserData = user;
+    return user;
+  } catch (err) {
+    console.error('Error loading survivor profile:', err);
+    userNameEl.textContent = 'Error loading profile';
+    userEmailEl.textContent = '';
+    alert('Error loading profile. Please try again.');
+    return null;
+  }
+}
+
+// ===== SIGN OUT =====
+document.querySelector('.signout-btn')?.addEventListener('click', async () => {
+  await signOutAndRedirect();
+});
+
+// ===== SECTION NAVIGATION =====
+function showSection(sectionId) {
+  document.querySelectorAll('.main-section').forEach(s => s.classList.remove('active'));
+  const targetSection = document.getElementById(`${sectionId}-section`);
+  if (targetSection) targetSection.classList.add('active');
+
+  document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+  document.querySelector(`[data-section="${sectionId}"]`)?.classList.add('active');
+}
+
+document.querySelectorAll('[data-section]').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    showSection(link.dataset.section);
+  });
+});
+
+document.querySelectorAll('.action-btn').forEach(btn => {
+  btn.addEventListener('click', () => showSection(btn.dataset.section));
+});
+
+// ===== DASHBOARD STATS =====
+async function loadDashboardStats() {
+  try {
+    const appointments = await api.get(`/appointments?userId=${currentUser.id}`);
+    const upcomingCount = appointments.filter(a => a.status !== 'completed' && a.status !== 'cancelled').length;
+    document.getElementById('upcoming-count').textContent = upcomingCount;
+
+    const reports = await api.get(`/reports?userId=${currentUser.id}`);
+    document.getElementById('reports-count').textContent = reports.length;
+
+    const resources = await api.get('/resources');
+    document.getElementById('resources-count').textContent = resources.length;
+  } catch (err) {
+    console.error('Error loading stats:', err);
+  }
+}
+
+// ===== REPORT INCIDENT =====
+document.getElementById('report-form')?.addEventListener('submit', async e => {
+  e.preventDefault();
+  const msgEl = document.getElementById('report-message');
+
+  try {
+    const type = document.getElementById('report-type').value;
+    const description = document.getElementById('report-description').value;
+
+    await api.post('/reports', { type, description });
+    await logActivity('Submitted incident report', type, 'survivor');
+
+    msgEl.innerHTML = '<div class="success">Report submitted successfully! Our team will review it shortly.</div>';
+    msgEl.style.display = 'block';
+    document.getElementById('report-form').reset();
+    setTimeout(() => msgEl.style.display = 'none', 5000);
+  } catch (err) {
+    console.error('Error submitting report:', err);
+    msgEl.innerHTML = `<div class="error">Error: ${err.message}</div>`;
+    msgEl.style.display = 'block';
+  }
+});
+
+// ===== APPOINTMENTS =====
+async function loadAppointments() {
+  const appointmentsList = document.getElementById('appointments-list');
+  try {
+    const appointments = await api.get(`/appointments?userId=${currentUser.id}`);
+    appointmentsList.innerHTML = '';
+
+    if (appointments.length === 0) {
+      appointmentsList.innerHTML = '<li class="empty-note">No appointments scheduled yet</li>';
+      return;
+    }
+
+    appointments.forEach(appt => {
+      const date = new Date(appt.date).toLocaleString();
+      const li = document.createElement('li');
+      li.className = `appointment-item status-${appt.status}`;
+      const professionalType = appt.professional_type ?
+        appt.professional_type.charAt(0).toUpperCase() + appt.professional_type.slice(1) + ' Professional' :
+        '';
+      const counselorName = appt.counselor_name || professionalType;
+
+      li.innerHTML = `
+        <div class="appointment-header">
+          <strong>${counselorName}</strong>
+          <span class="status-badge">${appt.status.toUpperCase()}</span>
+        </div>
+        <div class="appointment-body">
+          <p><i class="fa-solid fa-calendar"></i> ${date}</p>
+          <p><i class="fa-solid fa-stethoscope"></i> ${appt.reason} Appointment</p>
+          ${appt.notes ? `<p><i class="fa-solid fa-note-sticky"></i> ${appt.notes}</p>` : ''}
+        </div>
+      `;
+      appointmentsList.appendChild(li);
+    });
+  } catch (err) {
+    console.error('Error loading appointments:', err);
+    appointmentsList.innerHTML = '<li class="empty-note">Error loading appointments</li>';
+  }
+}
+
+document.getElementById('schedule-appointment-form')?.addEventListener('submit', async e => {
+  e.preventDefault();
+  const msgEl = document.getElementById('schedule-message');
+
+  try {
+    const professionalType = document.getElementById('appointment-type').value;
+    const dateTimeStr = document.getElementById('appointment-date').value;
+    const reason = document.getElementById('appointment-reason').value;
+    const notes = document.getElementById('appointment-notes').value;
+
+    if (!professionalType || !dateTimeStr || !reason) {
+      msgEl.innerHTML = '<div class="error">Please fill in all required fields</div>';
+      msgEl.style.display = 'block';
+      return;
+    }
+
+    await api.post('/appointments', { professionalType, date: new Date(dateTimeStr).toISOString(), reason, notes });
+    await logActivity('Scheduled appointment', professionalType, 'survivor');
+
+    msgEl.innerHTML = `<div class="success">Appointment request submitted! A ${professionalType} will confirm your appointment soon.</div>`;
+    msgEl.style.display = 'block';
+    document.getElementById('schedule-appointment-form').reset();
+    setTimeout(() => msgEl.style.display = 'none', 5000);
+    loadAppointments();
+  } catch (err) {
+    console.error('Error scheduling appointment:', err);
+    msgEl.innerHTML = `<div class="error">Error: ${err.message}</div>`;
+    msgEl.style.display = 'block';
+  }
+});
+
+// ===== RESOURCES =====
+async function loadResources() {
+  const resourcesList = document.getElementById('resources-list');
+  try {
+    const resources = await api.get('/resources');
+    // Keep the articles link
+    resourcesList.innerHTML = `<li><a href="../Articles/articles.html" style="color:#C2185B; font-weight:bold; text-decoration:none;">📚 Healing Articles & Resources</a></li>`;
+
+    resources.forEach(resource => {
+      const li = document.createElement('li');
+      li.className = 'resource-item';
+      li.innerHTML = `
+        <div class="resource-header"><h4>${resource.title}</h4></div>
+        <div class="resource-body">
+          <a href="${resource.file_url}" target="_blank" class="btn btn-small">
+            <i class="fa-solid fa-download"></i> Download/View
+          </a>
+        </div>
+      `;
+      resourcesList.appendChild(li);
+    });
+  } catch (err) {
+    console.error('Error loading resources:', err);
+  }
+}
+
+// ===== PROFILE =====
+function loadProfile() {
+  if (!currentUserData) return;
+  document.getElementById('profile-fullname').value = currentUserData.fullname || currentUserData.name || '';
+  document.getElementById('profile-email').value = currentUserData.email || '';
+  document.getElementById('profile-phone').value = currentUserData.phone || '';
+}
+
+document.getElementById('profile-form')?.addEventListener('submit', async e => {
+  e.preventDefault();
+  const msgEl = document.getElementById('profile-message');
+
+  try {
+    const fullname = document.getElementById('profile-fullname').value;
+    const phone = document.getElementById('profile-phone').value;
+
+    await api.put(`/users/${currentUser.id}`, { fullname, phone });
+    await logActivity('Updated profile', null, 'survivor');
+
+    msgEl.innerHTML = '<div class="success">Profile updated successfully!</div>';
+    msgEl.style.display = 'block';
+    setTimeout(() => msgEl.style.display = 'none', 3000);
+  } catch (err) {
+    console.error('Error updating profile:', err);
+    msgEl.innerHTML = `<div class="error">Error: ${err.message}</div>`;
+    msgEl.style.display = 'block';
+  }
+});
+
+document.getElementById('cancel-edit')?.addEventListener('click', loadProfile);
+
+// ===== NOTIFICATIONS =====
+async function loadNotifications() {
+  try {
+    const notifications = await api.get('/notifications');
+    renderNotifications(notifications);
+    updateNotificationBadge(notifications);
+  } catch (err) {
+    console.error('Error loading notifications:', err);
+  }
+}
+
+function renderNotifications(notifications) {
+  const container = document.getElementById('notifications-list');
+  const filter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
+
+  let filtered = notifications;
+  if (filter === 'unread') filtered = notifications.filter(n => !n.read);
+  else if (filter === 'appointment') filtered = notifications.filter(n => n.type === 'appointment');
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<p class="empty-state">No notifications yet.</p>';
+    return;
+  }
+
+  container.innerHTML = filtered.map(notif => {
+    const date = new Date(notif.created_at);
+    const timeAgo = getTimeAgo(date);
+    const readClass = notif.read ? '' : 'unread';
+
+    return `
+      <div class="notification-item ${readClass}" data-id="${notif.id}">
+        <div class="notification-content">
+          <p class="notification-message">${notif.message}</p>
+          <p class="notification-time">${timeAgo}</p>
+        </div>
+        <button class="mark-read-btn" data-id="${notif.id}">
+          ${notif.read ? '<i class="fa-regular fa-envelope-open"></i>' : '<i class="fa-solid fa-envelope"></i>'}
+        </button>
+      </div>
+    `;
+  }).join('');
+
+  document.querySelectorAll('.mark-read-btn').forEach(btn => {
+    btn.addEventListener('click', async e => {
+      const notifId = e.currentTarget.dataset.id;
+      try {
+        await api.put(`/notifications/${notifId}/read`);
+        loadNotifications();
+      } catch (err) {
+        console.error('Error marking notification as read:', err);
+      }
+    });
+  });
+}
+
+function updateNotificationBadge(notifications) {
+  const unreadCount = notifications.filter(n => !n.read).length;
+  const badge = document.getElementById('notification-badge');
+  if (unreadCount > 0) {
+    badge.textContent = unreadCount;
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function getTimeAgo(date) {
+  const seconds = Math.floor((new Date() - date) / 1000);
+  let interval = seconds / 31536000;
+  if (interval > 1) return Math.floor(interval) + ' years ago';
+  interval = seconds / 2592000;
+  if (interval > 1) return Math.floor(interval) + ' months ago';
+  interval = seconds / 86400;
+  if (interval > 1) return Math.floor(interval) + ' days ago';
+  interval = seconds / 3600;
+  if (interval > 1) return Math.floor(interval) + ' hours ago';
+  interval = seconds / 60;
+  if (interval > 1) return Math.floor(interval) + ' minutes ago';
+  return Math.floor(seconds) + ' seconds ago';
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', e => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    e.currentTarget.classList.add('active');
+    loadNotifications();
+  });
+});
+
+// ===== CHAT SYSTEM =====
+let currentChatId = null;
+let currentRecipient = null;
+let chatPollInterval = null;
+
+async function loadUsersForChat() {
+  try {
+    const users = await api.get('/users');
+    const select = document.getElementById('new-chat-select');
+    if (!select) return;
+
+    select.innerHTML = '<option value="" disabled selected>Start new chat...</option>';
+
+    const otherUsers = users.filter(u => u.id !== currentUser.id);
+    otherUsers.sort((a, b) => (a.fullname || a.name || '').localeCompare(b.fullname || b.name || ''));
+
+    otherUsers.forEach(user => {
+      const option = document.createElement('option');
+      option.value = user.id;
+      const displayName = `${user.fullname || user.name || 'Unknown'} (${user.role || 'user'})`;
+      option.textContent = displayName;
+      option.dataset.name = displayName;
+      select.appendChild(option);
+    });
+
+    select.addEventListener('change', async e => {
+      if (e.target.value) {
+        const userId = e.target.value;
+        const userName = e.target.selectedOptions[0].dataset.name;
+        await startNewChat(userId, userName);
+        e.target.value = '';
+      }
+    });
+  } catch (err) {
+    console.error('Error loading users for chat:', err);
+  }
+}
+
+async function startNewChat(userId, userName) {
+  try {
+    const chatRoom = await api.post('/chat/rooms', { recipientId: userId, recipientName: userName });
+    openChat(chatRoom.id, userId, userName);
+    await logActivity('Started new chat with user', userName, 'survivor');
+  } catch (err) {
+    console.error('Error starting new chat:', err);
+    alert(`Error starting chat: ${err.message}`);
+  }
+}
+
+async function loadChatRooms() {
+  try {
+    const chatRooms = await api.get('/chat/rooms');
+    const chatList = document.getElementById('chat-list');
+    if (!chatList) return;
+
+    if (chatRooms.length === 0) {
+      chatList.innerHTML = '<div class="empty-chat-state">No chats yet. Start a new chat!</div>';
+      return;
+    }
+
+    chatList.innerHTML = '';
+    chatRooms.forEach(chat => {
+      const chatItem = createChatListItem(chat.id, chat);
+      chatList.appendChild(chatItem);
+    });
+
+    if (currentChatId) {
+      document.querySelectorAll('.chat-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.dataset.chatId === currentChatId) item.classList.add('active');
+      });
+    }
+  } catch (err) {
+    console.error('Error loading chat rooms:', err);
+  }
+}
+
+function createChatListItem(chatId, chatData) {
+  const div = document.createElement('div');
+  div.className = 'chat-item';
+  div.dataset.chatId = chatId;
+
+  const participants = typeof chatData.participants === 'string' ? JSON.parse(chatData.participants) : chatData.participants;
+  let otherParticipantId = null;
+  let otherParticipantName = 'Unknown';
+  for (const [participantId, participantName] of Object.entries(participants)) {
+    if (participantId !== currentUser.id) {
+      otherParticipantId = participantId;
+      otherParticipantName = participantName;
+      break;
+    }
+  }
+
+  div.dataset.recipientId = otherParticipantId;
+  div.dataset.recipientName = otherParticipantName;
+
+  const lastMessageTime = chatData.last_message_time ? new Date(chatData.last_message_time) : new Date();
+  const timeStr = formatMessageTime(lastMessageTime);
+
+  div.innerHTML = `
+    <div class="chat-item-header">
+      <span class="chat-name">${otherParticipantName}</span>
+      <span class="chat-time">${timeStr}</span>
+    </div>
+    <div class="chat-preview">${chatData.last_message || 'No messages yet'}</div>
+  `;
+
+  div.addEventListener('click', () => openChat(chatId, otherParticipantId, otherParticipantName));
+  return div;
+}
+
+function formatMessageTime(timestamp) {
+  const now = new Date();
+  const messageDate = new Date(timestamp);
+  const diffMs = now - messageDate;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return messageDate.toLocaleDateString();
+}
+
+function openChat(chatId, recipientId, recipientName) {
+  currentChatId = chatId;
+  currentRecipient = { id: recipientId, name: recipientName };
+
+  const chatHeader = document.getElementById('chat-header');
+  const chatInputArea = document.getElementById('chat-input-area');
+  const chatMessages = document.getElementById('chat-messages');
+
+  if (chatHeader) chatHeader.style.display = 'flex';
+  if (chatInputArea) chatInputArea.style.display = 'flex';
+  if (chatMessages) chatMessages.innerHTML = '';
+
+  const recipientNameEl = document.getElementById('recipient-name');
+  const recipientAvatar = document.getElementById('recipient-avatar');
+  if (recipientNameEl) recipientNameEl.textContent = recipientName;
+  if (recipientAvatar) recipientAvatar.textContent = recipientName.charAt(0).toUpperCase();
+
+  document.querySelectorAll('.chat-item').forEach(item => {
+    item.classList.remove('active');
+    if (item.dataset.chatId === chatId) item.classList.add('active');
+  });
+
+  const emptyChat = document.querySelector('.empty-chat');
+  if (emptyChat) emptyChat.style.display = 'none';
+
+  loadChatMessages(chatId);
+
+  // Start polling for new messages
+  if (chatPollInterval) clearInterval(chatPollInterval);
+  chatPollInterval = setInterval(() => loadChatMessages(chatId), 5000);
+}
+
+async function loadChatMessages(chatId) {
+  try {
+    const messages = await api.get(`/chat/rooms/${chatId}/messages`);
+    const messagesContainer = document.getElementById('chat-messages');
+    if (!messagesContainer) return;
+
+    messagesContainer.innerHTML = '';
+    if (messages.length === 0) {
+      messagesContainer.innerHTML = '<div class="empty-chat-state"><p>No messages yet. Start the conversation!</p></div>';
+      return;
+    }
+
+    messages.forEach(message => {
+      const messageElement = createMessageElement(message);
+      messagesContainer.appendChild(messageElement);
+    });
+
+    setTimeout(() => {
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }, 100);
+  } catch (err) {
+    console.error('Error loading messages:', err);
+  }
+}
+
+function createMessageElement(message) {
+  const div = document.createElement('div');
+  const isSent = message.sender_id === currentUser.id;
+  const messageTime = new Date(message.created_at);
+  const timeStr = messageTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+  div.className = `message ${isSent ? 'sent' : 'received'}`;
+  div.innerHTML = `
+    <div class="message-content">${message.text}</div>
+    <div class="message-time">${timeStr}</div>
+  `;
+  return div;
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chat-message-input');
+  if (!input) return;
+
+  const text = input.value.trim();
+  if (!text || !currentChatId || !currentRecipient) return;
+
+  try {
+    await api.post(`/chat/rooms/${currentChatId}/messages`, {
+      text,
+      recipientId: currentRecipient.id,
+      recipientName: currentRecipient.name,
+    });
+
+    input.value = '';
+    input.style.height = 'auto';
+    document.getElementById('send-message-btn').disabled = true;
+
+    await logActivity('Sent message to user', currentRecipient.name, 'survivor');
+    loadChatMessages(currentChatId);
+    loadChatRooms();
+  } catch (err) {
+    console.error('Error sending message:', err);
+    alert(`Error: ${err.message}`);
+  }
+}
+
+function initChat() {
+  if (!currentUser) return;
+
+  loadUsersForChat();
+  loadChatRooms();
+
+  const messageInput = document.getElementById('chat-message-input');
+  const sendBtn = document.getElementById('send-message-btn');
+  if (!messageInput || !sendBtn) return;
+
+  messageInput.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = this.scrollHeight + 'px';
+    sendBtn.disabled = !this.value.trim();
+  });
+
+  messageInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (!sendBtn.disabled) sendMessage();
+    }
+  });
+
+  sendBtn.addEventListener('click', sendMessage);
+}
+
+// ===== INITIALIZATION =====
+(async () => {
+  const session = await requireSession();
+  if (!session) return;
+
+  const userData = await loadSurvivor(session);
+  if (!userData) return;
+
+  loadDashboardStats();
+  loadAppointments();
+  loadResources();
+  loadProfile();
+  loadNotifications();
+  initChat();
+})();
+</script>
+
+<script type="module">
+
+  //=== MAP FUNCTIONALITY ===
+
+const map = L.map('map');
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+// Default view around Nairobi
+map.setView([-1.286389, 36.817223], 12);
+
+// Layers
+const facilityMarkers = L.layerGroup().addTo(map);
+const userMarkerLayer = L.layerGroup().addTo(map);
+
+// --- Custom medical facility icon ---
+const facilityIcon = L.icon({
+  iconUrl: 'https://cdn-icons-png.flaticon.com/512/148/148753.png',
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32]
+});
+
+// --- Distance helpers ---
+function toRad(deg) { return deg * Math.PI / 180; }
+function haversine(a, b) {
+  const R = 6371;
+  const dLat = toRad(b.lat - a.lat);
+  const dLng = toRad(b.lng - a.lng);
+  const lat1 = toRad(a.lat);
+  const lat2 = toRad(b.lat);
+  const h = Math.sin(dLat/2)**2 + Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLng/2)**2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+
+// --- Fetch facilities dynamically from Overpass API ---
+async function fetchFacilities(lat, lng, radius = 10000) {
+  const query = `
+    [out:json];
+    (
+      node(around:${radius},${lat},${lng})[amenity=hospital];
+      node(around:${radius},${lat},${lng})[amenity=clinic];
+      node(around:${radius},${lat},${lng})[amenity=doctors];
+      node(around:${radius},${lat},${lng})[healthcare=centre];
+      node(around:${radius},${lat},${lng})[amenity=pharmacy];
+    );
+    out;
+  `;
+  const url = "https://overpass-api.de/api/interpreter?data=" + encodeURIComponent(query);
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  const facilities = data.elements.map(el => ({
+    name: el.tags.name || "Unnamed Facility",
+    lat: el.lat,
+    lng: el.lon,
+    address: el.tags["addr:street"] || el.tags["addr:city"] || "No address available",
+    type: el.tags.amenity || el.tags.healthcare || "Medical Facility"
+  }));
+
+  facilities.forEach(f => {
+    f.distanceKm = haversine({ lat, lng }, { lat: f.lat, lng: f.lng });
+  });
+
+  const hospitals = facilities.filter(f => f.type === "hospital").sort((a, b) => a.distanceKm - b.distanceKm).slice(0, 10);
+  const clinics = facilities.filter(f => f.type === "clinic").sort((a, b) => a.distanceKm - b.distanceKm).slice(0, 10);
+  const pharmacies = facilities.filter(f => f.type === "pharmacy").sort((a, b) => a.distanceKm - b.distanceKm).slice(0, 10);
+  const doctors = facilities.filter(f => f.type === "doctors").sort((a, b) => a.distanceKm - b.distanceKm).slice(0, 10);
+  const centres = facilities.filter(f => f.type === "centre").sort((a, b) => a.distanceKm - b.distanceKm).slice(0, 10);
+
+  return { hospitals, clinics, pharmacies, doctors, centres };
+}
+
+// --- UI feedback ---
+const resultsEl = document.getElementById('results');
+function showResults(origin, grouped) {
+  userMarkerLayer.clearLayers();
+  const userMarker = L.marker([origin.lat, origin.lng]).bindPopup('Selected location');
+  userMarker.addTo(userMarkerLayer);
+
+  facilityMarkers.clearLayers();
+
+  const allFacilities = [...grouped.hospitals, ...grouped.clinics, ...grouped.pharmacies, ...grouped.doctors, ...grouped.centres];
+  allFacilities.forEach(c => {
+    L.marker([c.lat, c.lng], { icon: facilityIcon })
+      .bindPopup(`<b>${c.name}</b><br>${c.address}<br><i>${c.type}</i>`)
+      .addTo(facilityMarkers);
+  });
+
+  if (allFacilities.length > 0) {
+    const group = L.featureGroup([userMarker, ...allFacilities.map(c => L.marker([c.lat, c.lng], { icon: facilityIcon }))]);
+    map.fitBounds(group.getBounds().pad(0.2));
+  }
+
+  resultsEl.innerHTML = `
+    <h4>Nearest medical centres</h4>
+    ${renderGroup("Hospitals", grouped.hospitals, origin)}
+    ${renderGroup("Clinics", grouped.clinics, origin)}
+    ${renderGroup("Pharmacies", grouped.pharmacies, origin)}
+    ${renderGroup("Doctors", grouped.doctors, origin)}
+    ${renderGroup("Health Centres", grouped.centres, origin)}
+  `;
+
+  resultsEl.querySelectorAll('button[data-lat]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const lat = parseFloat(btn.getAttribute('data-lat'));
+      const lng = parseFloat(btn.getAttribute('data-lng'));
+      map.setView([lat, lng], 15);
+    });
+  });
+}
+
+function renderGroup(title, facilities, origin) {
+  if (!facilities.length) return "";
+  return `
+    <h5>${title}</h5>
+    <ol>
+      ${facilities.map(c => `
+        <li>
+          <strong>${c.name}</strong> — ${c.address}
+          <br><small>${c.type} • ${c.distanceKm.toFixed(2)} km away</small>
+          <br><button class="btn btn-small" data-lat="${c.lat}" data-lng="${c.lng}">Show on map</button>
+        </li>`).join('')}
+    </ol>
+  `;
+}
+
+// --- Use my location ---
+const useLocationBtn = document.getElementById('use-location-btn');
+if (useLocationBtn) {
+  useLocationBtn.addEventListener('click', async () => {
+    if (!navigator.geolocation) {
+      resultsEl.textContent = 'Geolocation not supported.';
+      return;
+    }
+    resultsEl.textContent = 'Locating…';
+    navigator.geolocation.getCurrentPosition(async pos => {
+      const origin = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      const grouped = await fetchFacilities(origin.lat, origin.lng);
+      showResults(origin, grouped);
+    },
+    () => { resultsEl.textContent = 'Location access denied or unavailable.'; },
+    { enableHighAccuracy: true, timeout: 10000 });
+  });
+}
+
+// --- Search by address (Nominatim) ---
+const addressForm = document.getElementById('address-form');
+if (addressForm) {
+  addressForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const q = document.getElementById('address-input').value.trim();
+    if (!q) return;
+    resultsEl.textContent = 'Searching…';
+
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`;
+      const res = await fetch(url, { headers: { 'Accept-Language': 'en' } });
+      const data = await res.json();
+      if (!data.length) {
+        resultsEl.textContent = 'No location found.';
+        return;
+      }
+
+      resultsEl.innerHTML = `
+        <h4>Search results for "${q}"</h4>
+        <ol>
+          ${data.map(place => `
+            <li>
+              ${place.display_name}
+              <br><button class="btn btn-small" data-lat="${place.lat}" data-lng="${place.lon}">Select this location</button>
+            </li>`).join('')}
+        </ol>
+      `;
+
+      resultsEl.querySelectorAll('button[data-lat]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const lat = parseFloat(btn.getAttribute('data-lat'));
+          const lng = parseFloat(btn.getAttribute('data-lng'));
+          const origin = { lat, lng };
+          const grouped = await fetchFacilities(lat, lng);
+          showResults(origin, grouped);
+          map.setView([lat, lng], 14);
+        });
+      });
+
+    } catch {
+      resultsEl.textContent = 'Search failed.';
+    }
+  });
+}
+
+</script>
+
+  <script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+</body>
+  </html>

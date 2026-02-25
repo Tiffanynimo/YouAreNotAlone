@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anonymous Signup | You Are Not Alone</title>
+  <link rel="stylesheet" href="auth.css" />
+</head>
+<body class="auth-body">
+
+  <div class="auth-container">
+    <img src="logo.png" alt="Heart Logo" class="auth-logo" />
+    <h1>You Are Not Alone</h1>
+    <p class="subtitle">Sign up anonymously for support and resources</p>
+
+    <form id="anonForm">
+  <input id="nickname" type="text" placeholder="Nickname" required />
+  <input id="password" type="password" placeholder="Password" required />
+  <button type="submit">Create Anonymous Account</button>
+</form>
+
+    <p class="signup-link">Prefer full signup? <a href="register.html">Register here</a></p>
+    <p class="crisis">Crisis Support: 1-800-656-4673</p>
+  </div>
+
+<script type="module">
+import { authClient, redirectToDashboard } from "../lib/auth-client.js";
+
+document.getElementById("anonForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const nickname = document.getElementById("nickname").value;
+  const password = document.getElementById("password").value;
+
+  // Generate a unique anonymous email
+  const anonEmail = `anon_${Date.now()}_${Math.random().toString(36).slice(2, 8)}@anonymous.local`;
+
+  try {
+    const { data, error } = await authClient.signUp.email({
+      email: anonEmail,
+      password,
+      name: nickname,
+      fullname: nickname,
+      role: "anonymous",
+    });
+
+    if (error) {
+      alert("Signup Error: " + error.message);
+      return;
+    }
+
+    redirectToDashboard("anonymous");
+  } catch (error) {
+    alert("Signup Error: " + error.message);
+  }
+});
+</script>
+
+</body>
+</html>

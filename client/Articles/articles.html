@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Healing Articles</title>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        background: url('yourbackground.png') no-repeat center center fixed;
+        background-size: cover;
+        font-family: Arial, sans-serif;
+        position: relative;
+    }
+
+    body::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(255, 230, 242, 0.7);
+        z-index: 0;
+    }
+
+    .header {
+        text-align: center;
+        padding: 25px;
+        font-size: 2rem;
+        font-weight: bold;
+        color: #C2185B;
+        position: relative;
+        z-index: 2;
+    }
+
+    .articles-container {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        padding: 30px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .column {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        width: 320px;
+    }
+
+    .article-card {
+        background: #FFD1E8;
+        border-radius: 18px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        padding: 15px;
+        text-align: center;
+        transition: transform 0.3s;
+    }
+
+    .article-card:hover {
+        transform: scale(1.04);
+    }
+
+    .article-card img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 14px;
+        background: #FFB6D5;
+    }
+
+    .article-title {
+        margin-top: 12px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #D63384;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+</style>
+</head>
+
+<body>
+
+<div class="header">Healing Articles for Survivors</div>
+
+<div class="articles-container">
+
+    <div class="column">
+
+        <a href="https://www.wchn.sa.gov.au/our-network/yarrow-place/rape-and-sexual-assault-topics/coping-after-a-sexual-assault#:~:text=and%20frightening%20incident.-,Self%2DCare%20and%20Coping,last%20for%20quite%20some%20time."
+        target="_blank" class="article-card">
+            <img src="image copy.png" alt="Coping After Sexual Assault">
+            <div class="article-title">Coping After Sexual Assault</div>
+        </a>
+
+        <a href="https://www.helpguide.org/mental-health/ptsd-trauma/recovering-from-rape-and-sexual-trauma"
+        target="_blank" class="article-card">
+            <img src="image copy 2.png" alt="Recovering from Rape">
+            <div class="article-title">Recovering from Rape</div>
+        </a>
+
+        <a href="https://rapecrisis.org.uk/get-help/tools-for-victims-and-survivors/"
+        target="_blank" class="article-card">
+            <img src="image copy 3.png" alt="Self Help Tools">
+            <div class="article-title">Self Help Tools</div>
+        </a>
+
+    </div>
+
+
+    <div class="column">
+
+        <a href="https://www.rapecrisisscotland.org.uk/resources/RCS-003-Information-for-Partners-logos-WEB.pdf"
+        target="_blank" class="article-card">
+            <img src="image copy 4.png" alt="Coping with a Partner">
+            <div class="article-title">Coping With a Partner</div>
+        </a>
+
+        <a href="https://www.nsvrc.org/blog_post/five-lessons-rape-survivor-finding-peace-through-pandemic/"
+        target="_blank" class="article-card">
+            <img src="image copy 5.png" alt="Lessons from a Survivor">
+            <div class="article-title">Lessons from a Rape Survivor</div>
+        </a>
+
+        <a href="https://my.clevelandclinic.org/health/diseases/rape-trauma-syndrome"
+        target="_blank" class="article-card">
+            <img src="image copy 6.png" alt="Rape Trauma Syndrome">
+            <div class="article-title">Rape Trauma Syndrome</div>
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

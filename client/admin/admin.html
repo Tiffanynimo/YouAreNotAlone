@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>You Are Not Alone — Admin Dashboard</title>
+
+  <link rel="stylesheet" href="admin.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .user-tag {
+      font-size: 0.8em;
+      padding: 2px 6px;
+      border-radius: 10px;
+      margin-left: 5px;
+    }
+    .user-tag.survivor { background-color: #e3f2fd; color: #1976d2; }
+    .user-tag.medical { background-color: #f3e5f5; color: #7b1fa2; }
+    .user-tag.therapist { background-color: #e8f5e8; color: #388e3c; }
+    .user-tag.legal { background-color: #fff3e0; color: #f57c00; }
+    .sidebar-settings {
+      margin-top: auto;
+      padding: 15px;
+      border-top: 1px solid #e0e0e0;
+      background-color: #f5f5f5;
+    }
+    .platform-info { margin-top: 8px; }
+    .platform-name-label { font-size: 0.85em; color: #666; }
+    .platform-name-value { font-weight: bold; color: #333; }
+    .chat-item-header { display: flex; align-items: center; margin-bottom: 4px; }
+    .chat-name { font-weight: bold; margin-right: 5px; }
+    .chat-time { margin-left: auto; font-size: 0.8em; color: #666; }
+    .chat-preview { font-size: 0.9em; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  </style>
+</head>
+<body>
+
+<nav class="top-nav" role="banner">
+  <div class="left">
+    <img src="logo.png" alt="logo" class="logo" />
+    <div class="title">
+      <h1>You Are Not Alone</h1>
+      <p>Admin</p>
+    </div>
+  </div>
+  <div class="center">
+    <span class="crisis-label">Crisis 24/7 1-800-656-4673</span>
+  </div>
+  <div class="right">
+    <div class="user-info">
+      <p class="user-name">Loading...</p>
+      <p class="user-email">Loading...</p>
+    </div>
+    <button class="signout-btn">Sign Out</button>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside class="sidebar" aria-label="Primary navigation">
+    <nav class="sidebar-nav">
+      <a href="#" class="sidebar-item active"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+      <a href="#users" class="sidebar-item"><i class="fa-solid fa-users-cog"></i><span>Users</span></a>
+      <a href="#appointments" class="sidebar-item"><i class="fa-solid fa-calendar-check"></i><span>Appointments</span></a>
+      <a href="#reports" class="sidebar-item"><i class="fa-solid fa-file-lines"></i><span>Reports</span></a>
+      <a href="#content" class="sidebar-item"><i class="fa-solid fa-ban"></i><span>Content Moderation</span></a>
+      <a href="#resources" class="sidebar-item"><i class="fa-solid fa-file-pdf"></i><span>Resources</span></a>
+      <a href="#activity" class="sidebar-item"><i class="fa-solid fa-list"></i><span>Activity Logs</span></a>
+      <a href="#messages" class="sidebar-item"><i class="fa-solid fa-message"></i><span>Messages</span></a>
+      <a href="#settings" class="sidebar-item"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+    </nav>
+  </aside>
+
+  <main class="main" role="main">
+    <h1 class="dashboard-title">Admin Dashboard</h1>
+
+    <!-- Stats -->
+    <section class="stats">
+      <article class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+        <div class="stat-body">
+          <div class="stat-value" id="total-users">0</div>
+          <div class="stat-label">Total Users</div>
+        </div>
+      </article>
+      <article class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-calendar-check"></i></div>
+        <div class="stat-body">
+          <div class="stat-value" id="total-appointments">0</div>
+          <div class="stat-label">Appointments</div>
+        </div>
+      </article>
+      <article class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-file-lines"></i></div>
+        <div class="stat-body">
+          <div class="stat-value" id="total-reports">0</div>
+          <div class="stat-label">Reports</div>
+        </div>
+      </article>
+    </section>
+
+    <!-- Users Table -->
+    <section id="users" class="panel">
+      <h3>Users</h3>
+      <div class="panel-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="users-table">
+            <tr><td colspan="5">Loading users...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Appointments -->
+    <section id="appointments" class="panel">
+      <h3>Appointments</h3>
+      <table class="table">
+        <thead>
+          <tr><th>User</th><th>Counselor</th><th>Date & Time</th><th>Status</th></tr>
+        </thead>
+        <tbody id="appointments-table">
+          <tr><td colspan="4">Loading appointments...</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Charts -->
+    <section id="charts" class="panel">
+      <h3>Appointment Stats</h3>
+      <canvas id="appointmentsChart" height="150"></canvas>
+    </section>
+
+    <!-- Reports -->
+    <section id="reports" class="panel">
+      <h3>Reports</h3>
+      <ul id="reports-list"><li>Loading reports...</li></ul>
+    </section>
+
+    <!-- Content Moderation -->
+    <section id="content" class="panel">
+      <h3>Content Moderation</h3>
+      <ul id="flagged-messages"><li>Loading flagged messages...</li></ul>
+    </section>
+
+    <!-- Resources -->
+    <section id="resources" class="panel">
+      <h3>Manage Resources</h3>
+      <div>
+        <input type="text" id="resource-title" placeholder="Resource Title" />
+        <button id="add-resource-btn" class="btn">Add Resource</button>
+      </div>
+      <ul id="resources-list"><li>Loading resources...</li></ul>
+    </section>
+
+    <!-- Activity Logs -->
+    <section id="activity" class="panel">
+      <h3>Activity Logs</h3>
+      <ul id="activity-log"><li>Loading activity...</li></ul>
+    </section>
+
+    <!-- Messages Section -->
+    <section id="messages" class="panel">
+      <h3>Messages</h3>
+      <div class="panel-body">
+        <div class="chat-container">
+          <div class="chat-sidebar">
+            <div class="chat-list-header">
+              <h4>Chats</h4>
+              <input type="text" id="search-chats" class="search-chats" placeholder="Search chats...">
+            </div>
+            <div class="chat-list" id="chat-list">
+              <div class="empty-chat-state">Loading chats...</div>
+            </div>
+            <div class="start-new-chat">
+              <select id="new-chat-select" class="new-chat-select">
+                <option value="" disabled selected>Start new chat...</option>
+              </select>
+            </div>
+            <div class="sidebar-settings">
+              <h4>Settings</h4>
+              <div class="platform-info">
+                <div class="platform-name-label">Platform name</div>
+                <div class="platform-name-value">You Are Not Alone</div>
+              </div>
+            </div>
+          </div>
+          <div class="chat-main">
+            <div class="chat-header" id="chat-header" style="display: none;">
+              <div class="chat-recipient">
+                <div class="chat-recipient-avatar" id="recipient-avatar">U</div>
+                <div>
+                  <h4 id="recipient-name">User Name</h4>
+                  <small id="recipient-status">Online</small>
+                </div>
+              </div>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+              <div class="empty-chat">
+                <i class="fa-solid fa-comment-dots"></i>
+                <h4>Select a chat to start messaging</h4>
+                <p>Choose a user from the list to begin your conversation</p>
+              </div>
+            </div>
+            <div class="chat-input-area" id="chat-input-area" style="display: none;">
+              <textarea id="chat-message-input" placeholder="Type your message..." rows="1"></textarea>
+              <button id="send-message-btn" disabled>Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Settings -->
+    <section id="settings" class="panel">
+      <h3>Settings</h3>
+      <div class="panel-body">
+        <form class="settings-form">
+          <label>Platform name
+            <input type="text" value="You Are Not Alone" />
+          </label>
+          <label>Crisis number
+            <input type="text" value="1-800-656-4673" />
+          </label>
+          <div class="form-actions">
+            <button type="submit" class="btn primary">Save Settings</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <footer class="dashboard-footer">
+      <p class="help-text">You are not alone. Help is available 24/7.</p>
+    </footer>
+  </main>
+</div>
+
+<script type="module">
+import { requireSession, signOutAndRedirect, redirectToDashboard } from "../lib/auth-client.js";
+import { api, logActivity } from "../lib/api.js";
+
+const userNameEl = document.querySelector(".user-name");
+const userEmailEl = document.querySelector(".user-email");
+
+let currentUser = null;
+let currentUserData = null;
+
+// ===================== AUTH & INITIALIZATION =====================
+async function init() {
+  const session = await requireSession();
+  currentUser = session.user;
+  currentUserData = session.user;
+
+  if (currentUser.role?.toLowerCase() !== "admin") {
+    redirectToDashboard(currentUser.role);
+    return;
+  }
+
+  userNameEl.textContent = currentUser.fullname || currentUser.name;
+  userEmailEl.textContent = currentUser.email;
+
+  loadUsers();
+  loadActivityLogs();
+  loadFlaggedMessages();
+  loadResources();
+  loadReports();
+  loadDashboardStats();
+  loadAppointmentsTable();
+  initChat();
+}
+
+init();
+
+document.querySelector(".signout-btn").addEventListener("click", async () => {
+  await logActivity("Signed out", null, "admin");
+  signOutAndRedirect();
+});
+
+// ===================== USERS =====================
+async function loadUsers() {
+  const usersTable = document.getElementById("users-table");
+  try {
+    const users = await api.get("/users");
+    usersTable.innerHTML = "";
+
+    if (!users.length) {
+      usersTable.innerHTML = "<tr><td colspan='5'>No users found</td></tr>";
+      return;
+    }
+
+    users.forEach(user => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${user.fullname || user.name || "N/A"}</td>
+        <td>${user.email || "N/A"}</td>
+        <td>
+          <select class="role-select" data-id="${user.id}">
+            <option value="survivor" ${user.role === "survivor" ? "selected" : ""}>Survivor</option>
+            <option value="therapist" ${user.role === "therapist" ? "selected" : ""}>Therapist</option>
+            <option value="medical" ${user.role === "medical" ? "selected" : ""}>Medical Practitioner</option>
+            <option value="legal" ${user.role === "legal" ? "selected" : ""}>Legal Representative</option>
+            <option value="admin" ${user.role === "admin" ? "selected" : ""}>Admin</option>
+          </select>
+        </td>
+        <td>
+          <select class="status-select" data-id="${user.id}">
+            <option value="active" ${user.status === "active" ? "selected" : ""}>Active</option>
+            <option value="pending" ${user.status === "pending" ? "selected" : ""}>Pending</option>
+            <option value="suspended" ${user.status === "suspended" ? "selected" : ""}>Suspended</option>
+            <option value="banned" ${user.status === "banned" ? "selected" : ""}>Banned</option>
+            <option value="denied" ${user.status === "denied" ? "selected" : ""}>Denied</option>
+          </select>
+        </td>
+        <td>
+          <button class="delete-user-btn" data-id="${user.id}" data-email="${user.email}">Delete</button>
+          <button class="ban-user-btn" data-id="${user.id}" data-email="${user.email}">Ban</button>
+        </td>
+      `;
+      usersTable.appendChild(row);
+    });
+
+    setupUserActionListeners();
+  } catch (err) {
+    console.error("Error loading users:", err);
+    usersTable.innerHTML = "<tr><td colspan='5'>Error loading users</td></tr>";
+  }
+}
+
+function setupUserActionListeners() {
+  document.querySelectorAll(".delete-user-btn").forEach(btn => {
+    btn.onclick = async () => {
+      if (!confirm(`Delete user: ${btn.dataset.email}?`)) return;
+      await api.delete("/users/" + btn.dataset.id);
+      await logActivity("Deleted user", btn.dataset.email, "admin");
+      loadUsers();
+    };
+  });
+
+  document.querySelectorAll(".role-select").forEach(select => {
+    select.onchange = async () => {
+      await api.put("/users/" + select.dataset.id, { role: select.value });
+      await logActivity("Changed role", `UserID=${select.dataset.id} → ${select.value}`, "admin");
+    };
+  });
+
+  document.querySelectorAll(".status-select").forEach(select => {
+    select.onchange = async () => {
+      await api.put("/users/" + select.dataset.id, { status: select.value });
+      await logActivity("Updated status", `UserID=${select.dataset.id} → ${select.value}`, "admin");
+    };
+  });
+
+  document.querySelectorAll(".ban-user-btn").forEach(btn => {
+    btn.onclick = async () => {
+      await api.put("/users/" + btn.dataset.id, { status: "banned" });
+      await logActivity("Banned user", btn.dataset.email, "admin");
+      loadUsers();
+    };
+  });
+}
+
+// ===================== ACTIVITY LOGS =====================
+async function loadActivityLogs() {
+  const logsEl = document.getElementById("activity-log");
+  try {
+    const logs = await api.get("/activity-logs");
+    logsEl.innerHTML = "";
+
+    if (!logs.length) {
+      logsEl.innerHTML = "<li>No activity yet</li>";
+      return;
+    }
+
+    logs.forEach(data => {
+      const time = data.created_at ? new Date(data.created_at).toLocaleString() : "Unknown";
+      logsEl.innerHTML += `
+        <li>[${time}] [${data.user_role?.toUpperCase() || "N/A"}] ${data.action}
+        ${data.target ? "— " + data.target : ""}</li>
+      `;
+    });
+  } catch (err) {
+    console.error("Error loading activity logs:", err);
+    logsEl.innerHTML = "<li>Error loading activity logs</li>";
+  }
+}
+
+// ===================== FLAGGED MESSAGES =====================
+async function loadFlaggedMessages() {
+  const flaggedEl = document.getElementById("flagged-messages");
+  try {
+    const messages = await api.get("/flagged-messages");
+    flaggedEl.innerHTML = "";
+
+    if (!messages.length) {
+      flaggedEl.innerHTML = "<li>No flagged messages</li>";
+      return;
+    }
+
+    messages.forEach(msg => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <strong>${msg.user_email || 'Unknown'}</strong>: ${msg.text}
+        <button class="remove-msg-btn" data-id="${msg.id}">Remove</button>
+        <button class="warn-user-btn" data-user="${msg.user_id}">Warn</button>
+        <button class="suspend-user-btn" data-user="${msg.user_id}">Suspend</button>
+      `;
+      flaggedEl.appendChild(li);
+    });
+
+    setupFlaggedActions();
+  } catch (err) {
+    console.error("Error loading flagged messages:", err);
+    flaggedEl.innerHTML = "<li>Error loading flagged messages</li>";
+  }
+}
+
+function setupFlaggedActions() {
+  document.querySelectorAll(".remove-msg-btn").forEach(btn => {
+    btn.onclick = async () => {
+      await api.delete("/flagged-messages/" + btn.dataset.id);
+      await logActivity("Removed flagged message", btn.dataset.id, "admin");
+      loadFlaggedMessages();
+    };
+  });
+
+  document.querySelectorAll(".warn-user-btn").forEach(btn => {
+    btn.onclick = async () => {
+      await logActivity("Warned user", btn.dataset.user, "admin");
+      alert("User warned.");
+    };
+  });
+
+  document.querySelectorAll(".suspend-user-btn").forEach(btn => {
+    btn.onclick = async () => {
+      await api.put("/users/" + btn.dataset.user, { status: "suspended" });
+      await logActivity("Suspended user", btn.dataset.user, "admin");
+    };
+  });
+}
+
+// ===================== RESOURCES =====================
+async function loadResources() {
+  const resourcesEl = document.getElementById("resources-list");
+  try {
+    const resources = await api.get("/resources");
+    resourcesEl.innerHTML = "";
+
+    if (!resources.length) {
+      resourcesEl.innerHTML = "<li>No resources yet</li>";
+      return;
+    }
+
+    resources.forEach(res => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        ${res.title}
+        <button class="edit-res-btn" data-id="${res.id}">Edit</button>
+        <button class="delete-res-btn" data-id="${res.id}">Delete</button>
+      `;
+      resourcesEl.appendChild(li);
+    });
+
+    setupResourceActions();
+  } catch (err) {
+    console.error("Error loading resources:", err);
+    resourcesEl.innerHTML = "<li>Error loading resources</li>";
+  }
+}
+
+function setupResourceActions() {
+  document.querySelectorAll(".delete-res-btn").forEach(btn => {
+    btn.onclick = async () => {
+      await api.delete("/resources/" + btn.dataset.id);
+      await logActivity("Deleted resource", btn.dataset.id, "admin");
+      loadResources();
+    };
+  });
+
+  document.querySelectorAll(".edit-res-btn").forEach(btn => {
+    btn.onclick = async () => {
+      const newTitle = prompt("New title:");
+      if (!newTitle) return;
+      await api.put("/resources/" + btn.dataset.id, { title: newTitle });
+      await logActivity("Edited resource", btn.dataset.id, "admin");
+      loadResources();
+    };
+  });
+}
+
+document.getElementById("add-resource-btn").addEventListener("click", async () => {
+  const title = document.getElementById("resource-title").value.trim();
+  if (!title) {
+    alert("Provide a title.");
+    return;
+  }
+
+  try {
+    await api.post("/resources", { title });
+    await logActivity("Added resource", title, "admin");
+    document.getElementById("resource-title").value = "";
+    alert("Resource added.");
+    loadResources();
+  } catch (err) {
+    console.error(err);
+    alert("Failed to add resource.");
+  }
+});
+
+// ===================== REPORTS =====================
+async function loadReports() {
+  const list = document.getElementById("reports-list");
+  try {
+    const reports = await api.get("/reports");
+    list.innerHTML = "";
+
+    if (!reports.length) {
+      list.innerHTML = "<li>No reports yet</li>";
+      return;
+    }
+
+    reports.forEach(report => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <div class="report-card">
+          <h4>${(report.type || 'N/A').toUpperCase()}</h4>
+          <p><strong>Name:</strong> ${report.user_name || 'N/A'}</p>
+          <p><strong>Email:</strong> ${report.user_email || 'N/A'}</p>
+          <p><strong>Description:</strong> ${report.description || ''}</p>
+          <p><strong>Status:</strong> ${report.status || 'pending'}</p>
+          <button class="mark-reviewed-btn" data-id="${report.id}">Mark Reviewed</button>
+        </div>
+      `;
+      list.appendChild(li);
+    });
+
+    document.querySelectorAll(".mark-reviewed-btn").forEach(btn => {
+      btn.onclick = async () => {
+        await api.put("/reports/" + btn.dataset.id, { status: "reviewed" });
+        alert("Report reviewed.");
+        loadReports();
+      };
+    });
+  } catch (err) {
+    console.error("Error loading reports:", err);
+    list.innerHTML = "<li>Error loading reports</li>";
+  }
+}
+
+// ===================== APPOINTMENTS TABLE =====================
+async function loadAppointmentsTable() {
+  const table = document.getElementById("appointments-table");
+  try {
+    const appointments = await api.get("/appointments");
+    table.innerHTML = "";
+
+    if (!appointments.length) {
+      table.innerHTML = "<tr><td colspan='4'>No appointments</td></tr>";
+      return;
+    }
+
+    appointments.forEach(appt => {
+      const date = appt.date ? new Date(appt.date).toLocaleString() : 'N/A';
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${appt.user_name || 'N/A'}</td>
+        <td>${appt.counselor_name || 'Unassigned'}</td>
+        <td>${date}</td>
+        <td>${appt.status || 'N/A'}</td>
+      `;
+      table.appendChild(row);
+    });
+  } catch (err) {
+    console.error("Error loading appointments:", err);
+    table.innerHTML = "<tr><td colspan='4'>Error loading appointments</td></tr>";
+  }
+}
+
+// ===================== DASHBOARD STATS =====================
+async function loadDashboardStats() {
+  try {
+    const [users, reports, appointments] = await Promise.all([
+      api.get("/users"),
+      api.get("/reports"),
+      api.get("/appointments")
+    ]);
+    document.getElementById("total-users").textContent = users.length;
+    document.getElementById("total-reports").textContent = reports.length;
+    document.getElementById("total-appointments").textContent = appointments.length;
+
+    // Build chart
+    const statusCounts = { pending: 0, scheduled: 0, completed: 0, cancelled: 0 };
+    appointments.forEach(a => {
+      if (statusCounts[a.status] !== undefined) statusCounts[a.status]++;
+    });
+
+    const ctx = document.getElementById("appointmentsChart")?.getContext("2d");
+    if (ctx) {
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: Object.keys(statusCounts),
+          datasets: [{
+            label: "Appointments by Status",
+            data: Object.values(statusCounts),
+            backgroundColor: ["#ffc107", "#17a2b8", "#28a745", "#dc3545"]
+          }]
+        },
+        options: { responsive: true, scales: { y: { beginAtZero: true } } }
+      });
+    }
+  } catch (err) {
+    console.error("Error loading dashboard stats:", err);
+  }
+}
+
+// ===================== CHAT SYSTEM =====================
+let currentChatId = null;
+let currentRecipient = null;
+let chatPollInterval = null;
+
+async function getOrCreateChatRoom(userId, userName) {
+  const participants = [currentUser.id, userId].sort();
+  const chatRoomId = participants.join('_');
+  try {
+    const rooms = await api.get("/chat/rooms");
+    const existing = rooms.find(r => r.id === chatRoomId);
+    if (existing) return existing;
+  } catch (e) {}
+  return await api.post("/chat/rooms", { recipientId: userId, recipientName: userName });
+}
+
+async function loadUsersForChat() {
+  try {
+    const users = await api.get("/users");
+    const select = document.getElementById('new-chat-select');
+    if (!select) return;
+    select.innerHTML = '<option value="" disabled selected>Start new chat...</option>';
+    const otherUsers = users.filter(u => u.id !== currentUser.id);
+    otherUsers.sort((a, b) => (a.fullname || a.name || '').localeCompare(b.fullname || b.name || ''));
+    otherUsers.forEach(user => {
+      const option = document.createElement('option');
+      option.value = user.id;
+      const displayName = `${user.fullname || user.name || 'Unknown'} (${user.role || 'user'})`;
+      option.textContent = displayName;
+      option.dataset.name = displayName;
+      select.appendChild(option);
+    });
+    select.addEventListener('change', async e => {
+      if (e.target.value) {
+        const userId = e.target.value;
+        const userName = e.target.selectedOptions[0].dataset.name;
+        await startNewChat(userId, userName);
+        e.target.value = '';
+      }
+    });
+  } catch (err) {
+    console.error('Error loading users for chat:', err);
+  }
+}
+
+async function startNewChat(userId, userName) {
+  try {
+    const chatRoom = await getOrCreateChatRoom(userId, userName);
+    openChat(chatRoom.id, userId, userName);
+    await logActivity('Started new chat with user', userName, 'admin');
+  } catch (err) {
+    alert(`Error starting chat: ${err.message}`);
+  }
+}
+
+async function loadChatRooms() {
+  try {
+    const rooms = await api.get("/chat/rooms");
+    const chatList = document.getElementById('chat-list');
+    if (!chatList) return;
+    if (!rooms.length) {
+      chatList.innerHTML = '<div class="empty-chat-state">No chats yet. Start a new chat!</div>';
+      return;
+    }
+    chatList.innerHTML = '';
+    rooms.forEach(chat => chatList.appendChild(createChatListItem(chat.id, chat)));
+    if (currentChatId) {
+      document.querySelectorAll('.chat-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.dataset.chatId === currentChatId) item.classList.add('active');
+      });
+    }
+  } catch (err) {
+    console.error('Error loading chat rooms:', err);
+  }
+}
+
+function createChatListItem(chatId, chatData) {
+  const div = document.createElement('div');
+  div.className = 'chat-item';
+  div.dataset.chatId = chatId;
+
+  let otherParticipantId = null;
+  let otherParticipantName = 'Unknown';
+  if (chatData.participants) {
+    for (const [pid, pname] of Object.entries(chatData.participants)) {
+      if (pid !== currentUser.id) { otherParticipantId = pid; otherParticipantName = pname; break; }
+    }
+  }
+
+  div.dataset.recipientId = otherParticipantId;
+  div.dataset.recipientName = otherParticipantName;
+
+  // Extract role for tag
+  const roleMatch = otherParticipantName.match(/\((.*?)\)/);
+  let tagHtml = '';
+  if (roleMatch) {
+    const role = roleMatch[1].toLowerCase();
+    if (role.includes('survivor') || role.includes('anonymous')) tagHtml = '<span class="user-tag survivor">(survivor)</span>';
+    else if (role.includes('medical')) tagHtml = '<span class="user-tag medical">(medical)</span>';
+    else if (role.includes('therapist')) tagHtml = '<span class="user-tag therapist">(therapist)</span>';
+    else if (role.includes('legal')) tagHtml = '<span class="user-tag legal">(legal)</span>';
+  }
+
+  const displayName = otherParticipantName.replace(/\(.*?\)/g, '').trim();
+  const timeStr = chatData.last_message_time ? formatMessageTime(new Date(chatData.last_message_time)) : '';
+
+  div.innerHTML = `
+    <div class="chat-item-header">
+      <span class="chat-name">${displayName}</span>
+      ${tagHtml}
+      <span class="chat-time">${timeStr}</span>
+    </div>
+    <div class="chat-preview">${chatData.last_message || 'No messages yet'}</div>
+  `;
+
+  div.addEventListener('click', () => openChat(chatId, otherParticipantId, otherParticipantName));
+  return div;
+}
+
+function formatMessageTime(timestamp) {
+  const now = new Date();
+  const messageDate = new Date(timestamp);
+  const diffMs = now - messageDate;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffHours < 24) return `${diffHours}h ago`;
+  if (diffDays < 7) return `${diffDays}d ago`;
+  return messageDate.toLocaleDateString();
+}
+
+function openChat(chatId, recipientId, recipientName) {
+  currentChatId = chatId;
+  currentRecipient = { id: recipientId, name: recipientName };
+  const chatHeader = document.getElementById('chat-header');
+  const chatInputArea = document.getElementById('chat-input-area');
+  const chatMessages = document.getElementById('chat-messages');
+  if (chatHeader) chatHeader.style.display = 'flex';
+  if (chatInputArea) chatInputArea.style.display = 'flex';
+  if (chatMessages) chatMessages.innerHTML = '';
+  document.getElementById('recipient-name').textContent = recipientName;
+  document.getElementById('recipient-avatar').textContent = recipientName.charAt(0).toUpperCase();
+  document.querySelectorAll('.chat-item').forEach(item => {
+    item.classList.remove('active');
+    if (item.dataset.chatId === chatId) item.classList.add('active');
+  });
+  const emptyChat = document.querySelector('.empty-chat');
+  if (emptyChat) emptyChat.style.display = 'none';
+  loadChatMessages(chatId);
+  if (chatPollInterval) clearInterval(chatPollInterval);
+  chatPollInterval = setInterval(() => loadChatMessages(chatId), 5000);
+}
+
+async function loadChatMessages(chatId) {
+  try {
+    const messages = await api.get(`/chat/rooms/${chatId}/messages`);
+    const container = document.getElementById('chat-messages');
+    if (!container) return;
+    container.innerHTML = '';
+    if (!messages.length) {
+      container.innerHTML = '<div class="empty-chat-state"><p>No messages yet. Start the conversation!</p></div>';
+      return;
+    }
+    messages.forEach(msg => container.appendChild(createMessageElement(msg)));
+    setTimeout(() => { container.scrollTop = container.scrollHeight; }, 100);
+  } catch (err) {
+    console.error('Error loading messages:', err);
+  }
+}
+
+function createMessageElement(message) {
+  const div = document.createElement('div');
+  const isSent = message.sender_id === currentUser.id;
+  const timeStr = new Date(message.created_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  div.className = `message ${isSent ? 'sent' : 'received'}`;
+  div.innerHTML = `<div class="message-content">${message.text}</div><div class="message-time">${timeStr}</div>`;
+  return div;
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chat-message-input');
+  if (!input) return;
+  const text = input.value.trim();
+  if (!text || !currentChatId || !currentRecipient) return;
+  try {
+    await api.post(`/chat/rooms/${currentChatId}/messages`, { text, recipientId: currentRecipient.id });
+    input.value = '';
+    input.style.height = 'auto';
+    document.getElementById('send-message-btn').disabled = true;
+    await loadChatMessages(currentChatId);
+    await logActivity('Sent message to user', currentRecipient.name, 'admin');
+  } catch (err) {
+    alert(`Error: ${err.message}`);
+  }
+}
+
+function initChat() {
+  if (!currentUser || !currentUser.id) return;
+  loadUsersForChat();
+  loadChatRooms();
+  const messageInput = document.getElementById('chat-message-input');
+  const sendBtn = document.getElementById('send-message-btn');
+  if (!messageInput || !sendBtn) return;
+  messageInput.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = this.scrollHeight + 'px';
+    sendBtn.disabled = !this.value.trim();
+  });
+  messageInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!sendBtn.disabled) sendMessage(); }
+  });
+  sendBtn.addEventListener('click', sendMessage);
+}
+</script>
+
+</body>
+</html>

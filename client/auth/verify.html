@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Verification Page</title>
+  <link rel="stylesheet" href="auth.css">
+</head>
+
+    <body class="auth-body">
+    <div class="auth-container">
+    <img src="logo.png" alt="Heart Logo" class="auth-logo" />
+    <h1>You Are Not Alone</h1>
+    <p class="subtitle">A safe space for healing and support</p>
+
+    <form id="verifyForm">
+    <input type="text" id="caseId" placeholder="Enter Case ID" />
+    <input type="text" id="survivorId" placeholder="Enter Survivor ID" />
+    <button id="verify-btn">Verify</button>
+    <p id="verify-message"></p>
+    </form>
+
+<script type="module">
+import { api } from "../lib/api.js";
+
+const form = document.getElementById("verifyForm");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const caseId = document.getElementById("caseId").value;
+  const survivorId = document.getElementById("survivorId").value;
+
+  try {
+    await api.post("/verifications/verify", { caseId, survivorId });
+    alert("Verification successful! You can now log in.");
+    window.location.href = "login.html";
+  } catch (err) {
+    alert(err.message || "Invalid Case ID / Survivor ID or already verified.");
+  }
+});
+</script>
+</body>
+</html>
