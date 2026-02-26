@@ -30,6 +30,9 @@ const io = new Server(httpServer, {
   },
 });
 
+// Make io available to Express routes
+app.locals.io = io;
+
 // Track online users: socketId → { id, nickname }
 const onlineUsers = new Map();
 
@@ -39,6 +42,11 @@ io.on("connection", (socket) => {
     onlineUsers.set(socket.id, { id, nickname });
     // Broadcast updated user list to everyone
     io.emit("online-users", Array.from(onlineUsers.values()));
+  });
+
+  // Join a private dashboard chat room for real-time messages
+  socket.on("join-chat-room", (roomId) => {
+    socket.join(`chat:${roomId}`);
   });
 
   // Public message — broadcast to all

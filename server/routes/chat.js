@@ -81,10 +81,44 @@ router.post("/rooms/:id/messages", requireAuth, async (req, res) => {
       [preview, chatRoomId]
     );
 
+    // Emit real-time event to chat room participants
+    const io = req.app.locals.io;
+    if (io) {
+      io.to(`chat:${chatRoomId}`).emit("new-message", rows[0]);
+    }
+
     res.status(201).json(rows[0]);
   } catch (err) {
     console.error("Error sending message:", err);
     res.status(500).json({ error: "Failed to send message" });
+  }
+});
+
+// GET /api/chat/unread-count — count unread messages for current user
+router.get("/unread-count", requireAuth, async (req, res) => {
+  try {
+    const { rows } = await pool.query(
+      "SELECT COUNT(*) as count FROM messages WHERE recipient_id = $1 AND read = FALSE",
+      [req.user.id]
+    );
+    res.json({ count: parseInt(rows[0].count) });
+  } catch (err) {
+    console.error("Error counting unread messages:", err);
+    res.status(500).json({ error: "Failed to count unread messages" });
+  }
+});
+
+// PUT /api/chat/rooms/:id/read — mark all messages in room as read for current user
+router.put("/rooms/:id/read", requireAuth, async (req, res) => {
+  try {
+    await pool.query(
+      "UPDATE messages SET read = TRUE WHERE chat_room_id = $1 AND recipient_id = $2 AND read = FALSE",
+      [req.params.id, req.user.id]
+    );
+    res.json({ message: "Marked as read" });
+  } catch (err) {
+    console.error("Error marking messages as read:", err);
+    res.status(500).json({ error: "Failed to mark as read" });
   }
 });
 

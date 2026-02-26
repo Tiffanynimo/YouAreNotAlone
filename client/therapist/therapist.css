@@ -868,3 +868,5 @@ html, body {
     justify-content: center;
   }
 }
+
+.notification-badge { background: #E74C3C; color: #fff; border-radius: 50%; width: 20px; height: 20px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; margin-left: 4px; }

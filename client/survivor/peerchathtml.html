@@ -294,6 +294,23 @@
     return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
+  // ── Auto-fill nickname from session ──────────────────────────────────────
+  (async function tryAutoJoin() {
+    try {
+      const res = await fetch('/api/auth/get-session', { credentials: 'include' });
+      const data = await res.json();
+      if (data && data.user) {
+        const nickname = data.user.fullname || data.user.name || '';
+        if (nickname) {
+          document.getElementById("nickname-input").value = nickname;
+          joinChat();
+        }
+      }
+    } catch (e) {
+      // No session — user can enter nickname manually
+    }
+  })();
+
   // ── Join ──────────────────────────────────────────────────────────────────
   document.getElementById("join-btn").addEventListener("click", joinChat);
   document.getElementById("nickname-input").addEventListener("keydown", e => {
