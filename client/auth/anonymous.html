@@ -66,10 +66,10 @@
       <form id="anonSignupForm">
         <input id="signup-nickname" type="text" placeholder="Choose a nickname" autocomplete="username" required maxlength="30" />
         <input id="signup-password" type="password" placeholder="Choose a password" autocomplete="new-password" required />
+        <div class="error-msg" id="signup-error"></div>
+        <div class="success-msg" id="signup-success"></div>
         <button type="submit" id="signup-btn">Create Anonymous Account</button>
       </form>
-      <div class="error-msg" id="signup-error"></div>
-      <div class="success-msg" id="signup-success"></div>
     </div>
 
     <!-- Log In Panel -->
@@ -77,9 +77,9 @@
       <form id="anonLoginForm">
         <input id="login-nickname" type="text" placeholder="Your nickname" autocomplete="username" required />
         <input id="login-password" type="password" placeholder="Your password" autocomplete="current-password" required />
+        <div class="error-msg" id="login-error"></div>
         <button type="submit" id="login-btn">Log In</button>
       </form>
-      <div class="error-msg" id="login-error"></div>
     </div>
 
     <p class="signup-link">Prefer full signup? <a href="register.html">Register here</a></p>
@@ -154,7 +154,7 @@ document.getElementById("anonSignupForm").addEventListener("submit", async (e) =
     document.getElementById("signup-success").style.display = "block";
     setTimeout(() => redirectToDashboard("anonymous"), 1000);
   } catch (err) {
-    showError("signup-error", "Something went wrong. Please try again.");
+    showError("signup-error", err.message?.includes("fetch") ? "Cannot reach the server. Make sure it is running." : "Something went wrong: " + err.message);
   } finally {
     btn.disabled = false;
     btn.textContent = "Create Anonymous Account";
@@ -187,7 +187,7 @@ document.getElementById("anonLoginForm").addEventListener("submit", async (e) =>
 
     redirectToDashboard(data.user.role || "anonymous");
   } catch (err) {
-    showError("login-error", "Something went wrong. Please try again.");
+    showError("login-error", err.message?.includes("fetch") ? "Cannot reach the server. Make sure it is running." : "Something went wrong: " + err.message);
   } finally {
     btn.disabled = false;
     btn.textContent = "Log In";

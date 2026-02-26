@@ -952,6 +952,7 @@ function initChat() {
 
 // ===== REAL-TIME CHAT =====
 socket.on("new-message", (message) => {
+  if (!currentUser) return;
   if (message.chat_room_id === currentChatId) {
     const messagesContainer = document.getElementById('chat-messages');
     if (messagesContainer) {

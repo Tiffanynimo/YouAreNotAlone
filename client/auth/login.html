@@ -28,10 +28,9 @@
     <form id="loginForm">
       <input id="email" type="email" placeholder="Email" autocomplete="email" required />
       <input id="password" type="password" placeholder="Password" autocomplete="current-password" required />
+      <div class="error-msg" id="login-error"></div>
       <button type="submit" id="login-btn">Sign In</button>
     </form>
-
-    <div class="error-msg" id="login-error"></div>
 
     <p class="signup-link">Need an account? <a href="register.html">Sign up</a></p>
     <p class="signup-link">Anonymous user? <a href="anonymous.html">Log in here</a></p>
@@ -69,7 +68,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
     redirectToDashboard(data.user.role || "survivor");
   } catch (err) {
-    showError("Something went wrong. Please try again.");
+    showError(err.message?.includes("fetch") ? "Cannot reach the server. Make sure it is running." : "Something went wrong: " + err.message);
   } finally {
     btn.disabled = false;
     btn.textContent = "Sign In";

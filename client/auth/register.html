@@ -50,12 +50,11 @@
       <input id="email" type="email" placeholder="Email" autocomplete="email" required />
       <input id="password" type="password" placeholder="Password (min 6 characters)" autocomplete="new-password" required />
 
+      <div class="error-msg" id="signup-error"></div>
+      <div class="success-msg" id="signup-success"></div>
       <button type="submit" id="signup-btn">Create Account</button>
       <a href="login.html"><button type="button">Back to Login</button></a>
     </form>
-
-    <div class="error-msg" id="signup-error"></div>
-    <div class="success-msg" id="signup-success"></div>
 
     <p class="signup-link">Prefer to stay anonymous? <a href="anonymous.html">Sign up anonymously</a></p>
     <p class="crisis">Crisis Support: 1-800-656-4673</p>
@@ -114,7 +113,7 @@ document.getElementById("signupForm").addEventListener("submit", async (e) => {
     showSuccess("Account created! Taking you to your dashboard...");
     setTimeout(() => redirectToDashboard(role), 1000);
   } catch (err) {
-    showError("Something went wrong. Please try again.");
+    showError(err.message?.includes("fetch") ? "Cannot reach the server. Make sure it is running." : "Something went wrong: " + err.message);
   } finally {
     btn.disabled = false;
     btn.textContent = "Create Account";
