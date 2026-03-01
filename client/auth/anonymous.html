@@ -185,6 +185,10 @@ document.getElementById("anonLoginForm").addEventListener("submit", async (e) =>
       return;
     }
 
+    if (!data || !data.user) {
+      showError("login-error", "Login failed — no user data returned. Please try again.");
+      return;
+    }
     redirectToDashboard(data.user.role || "anonymous");
   } catch (err) {
     showError("login-error", err.message?.includes("fetch") ? "Cannot reach the server. Make sure it is running." : "Something went wrong: " + err.message);

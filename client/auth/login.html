@@ -66,6 +66,11 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
       return;
     }
 
+    if (!data || !data.user) {
+      showError("Login failed — no user data returned. Please try again.");
+      return;
+    }
+
     redirectToDashboard(data.user.role || "survivor");
   } catch (err) {
     showError(err.message?.includes("fetch") ? "Cannot reach the server. Make sure it is running." : "Something went wrong: " + err.message);

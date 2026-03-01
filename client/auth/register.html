@@ -111,7 +111,8 @@ document.getElementById("signupForm").addEventListener("submit", async (e) => {
     }
 
     showSuccess("Account created! Taking you to your dashboard...");
-    setTimeout(() => redirectToDashboard(role), 1000);
+    const redirectRole = data?.user?.role || role;
+    setTimeout(() => redirectToDashboard(redirectRole), 1000);
   } catch (err) {
     showError(err.message?.includes("fetch") ? "Cannot reach the server. Make sure it is running." : "Something went wrong: " + err.message);
   } finally {

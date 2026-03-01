@@ -6,6 +6,7 @@ const path = require("path");
 const { Server } = require("socket.io");
 const { toNodeHandler } = require("better-auth/node");
 const auth = require("./auth");
+const pool = require("./db");
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -49,34 +50,46 @@ io.on("connection", (socket) => {
     socket.join(`chat:${roomId}`);
   });
 
-  // Public message — broadcast to all
-  socket.on("public-message", ({ nickname, text }) => {
-    io.emit("public-message", {
-      nickname,
-      text,
-      timestamp: new Date().toISOString(),
-    });
+  // Public message — save to DB and broadcast to all
+  socket.on("public-message", ({ nickname, text, userId }) => {
+    const timestamp = new Date().toISOString();
+
+    // Save to PostgreSQL (fire and forget)
+    pool.query(
+      "INSERT INTO peer_chat_messages (type, sender_id, sender_nickname, text) VALUES ('public', $1, $2, $3)",
+      [userId || null, nickname, text]
+    ).catch(err => console.error("Error saving public peer message:", err));
+
+    io.emit("public-message", { nickname, text, timestamp });
   });
 
-  // Private message — send only to recipient's socket
-  socket.on("private-message", ({ toNickname, fromNickname, text }) => {
-    // Find the recipient socket
+  // Private message — save to DB and send to recipient
+  socket.on("private-message", ({ toNickname, fromNickname, text, userId }) => {
+    const timestamp = new Date().toISOString();
+
+    // Save to PostgreSQL (fire and forget)
+    pool.query(
+      "INSERT INTO peer_chat_messages (type, sender_id, sender_nickname, recipient_nickname, text) VALUES ('private', $1, $2, $3, $4)",
+      [userId || null, fromNickname, toNickname, text]
+    ).catch(err => console.error("Error saving private peer message:", err));
+
+    // Send to recipient
     for (const [sid, user] of onlineUsers.entries()) {
       if (user.nickname === toNickname) {
         io.to(sid).emit("private-message", {
           from: fromNickname,
           text,
-          timestamp: new Date().toISOString(),
+          timestamp,
         });
         break;
       }
     }
-    // Also echo back to sender
+    // Echo back to sender
     socket.emit("private-message", {
       from: fromNickname,
       to: toNickname,
       text,
-      timestamp: new Date().toISOString(),
+      timestamp,
       isSelf: true,
     });
   });
@@ -104,6 +117,7 @@ app.use("/api/reports", require("./routes/reports"));
 app.use("/api/notes", require("./routes/notes"));
 app.use("/api/resources", require("./routes/resources"));
 app.use("/api/flagged-messages", require("./routes/flaggedMessages"));
+app.use("/api/peer-chat", require("./routes/peerChat"));
 
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, "..", "client")));

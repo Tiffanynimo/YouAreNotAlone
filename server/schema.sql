@@ -121,6 +121,20 @@ CREATE TABLE IF NOT EXISTS resources (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Peer support chat messages (public room + private DMs)
+CREATE TABLE IF NOT EXISTS peer_chat_messages (
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  type TEXT NOT NULL DEFAULT 'public',        -- 'public' or 'private'
+  sender_id TEXT,                              -- BetterAuth user id (nullable for guests)
+  sender_nickname TEXT NOT NULL,
+  recipient_nickname TEXT,                     -- null for public messages
+  text TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_peer_chat_type ON peer_chat_messages(type, created_at);
+CREATE INDEX IF NOT EXISTS idx_peer_chat_dm ON peer_chat_messages(sender_nickname, recipient_nickname, created_at);
+
 -- Flagged messages (content moderation)
 CREATE TABLE IF NOT EXISTS flagged_messages (
   id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
