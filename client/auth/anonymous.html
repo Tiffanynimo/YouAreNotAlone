@@ -63,9 +63,9 @@
 
     <!-- Sign Up Panel -->
     <div class="tab-panel active" id="panel-signup">
-      <form id="anonSignupForm">
+      <form id="anonSignupForm" onsubmit="return false">
         <input id="signup-nickname" type="text" placeholder="Choose a nickname" autocomplete="username" required maxlength="30" />
-        <input id="signup-password" type="password" placeholder="Choose a password" autocomplete="new-password" required />
+        <input id="signup-password" type="password" placeholder="Choose a password (min 8 characters)" autocomplete="new-password" required />
         <div class="error-msg" id="signup-error"></div>
         <div class="success-msg" id="signup-success"></div>
         <button type="submit" id="signup-btn">Create Anonymous Account</button>
@@ -74,7 +74,7 @@
 
     <!-- Log In Panel -->
     <div class="tab-panel" id="panel-login">
-      <form id="anonLoginForm">
+      <form id="anonLoginForm" onsubmit="return false">
         <input id="login-nickname" type="text" placeholder="Your nickname" autocomplete="username" required />
         <input id="login-password" type="password" placeholder="Your password" autocomplete="current-password" required />
         <div class="error-msg" id="login-error"></div>
@@ -125,7 +125,7 @@ document.getElementById("anonSignupForm").addEventListener("submit", async (e) =
   const btn = document.getElementById("signup-btn");
 
   if (!nickname) return showError("signup-error", "Please enter a nickname.");
-  if (password.length < 6) return showError("signup-error", "Password must be at least 6 characters.");
+  if (password.length < 8) return showError("signup-error", "Password must be at least 8 characters.");
 
   btn.disabled = true;
   btn.textContent = "Creating account...";

@@ -34,7 +34,7 @@
     <h1>You Are Not Alone</h1>
     <p class="subtitle">A safe space for healing and support</p>
 
-    <form id="signupForm">
+    <form id="signupForm" onsubmit="return false">
       <input id="fullname" type="text" placeholder="Full Name" autocomplete="name" required />
 
       <select id="role" autocomplete="off" required>
@@ -48,7 +48,7 @@
 
       <input id="phone" type="tel" placeholder="Phone (Optional)" autocomplete="tel" />
       <input id="email" type="email" placeholder="Email" autocomplete="email" required />
-      <input id="password" type="password" placeholder="Password (min 6 characters)" autocomplete="new-password" required />
+      <input id="password" type="password" placeholder="Password (min 8 characters)" autocomplete="new-password" required />
 
       <div class="error-msg" id="signup-error"></div>
       <div class="success-msg" id="signup-success"></div>
@@ -71,6 +71,7 @@ function showError(msg) {
   errorEl.textContent = msg;
   errorEl.style.display = "block";
   successEl.style.display = "none";
+  errorEl.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
 function showSuccess(msg) {
@@ -93,7 +94,7 @@ document.getElementById("signupForm").addEventListener("submit", async (e) => {
   if (!fullname) return showError("Please enter your full name.");
   if (!role) return showError("Please select your role.");
   if (!email) return showError("Please enter your email.");
-  if (password.length < 6) return showError("Password must be at least 6 characters.");
+  if (password.length < 8) return showError("Password must be at least 8 characters.");
 
   btn.disabled = true;
   btn.textContent = "Creating account...";
@@ -110,8 +111,13 @@ document.getElementById("signupForm").addEventListener("submit", async (e) => {
       return;
     }
 
+    if (!data || !data.user) {
+      showError("Signup failed — no response from server. Please try again.");
+      return;
+    }
+
     showSuccess("Account created! Taking you to your dashboard...");
-    const redirectRole = data?.user?.role || role;
+    const redirectRole = data.user.role || role;
     setTimeout(() => redirectToDashboard(redirectRole), 1000);
   } catch (err) {
     showError(err.message?.includes("fetch") ? "Cannot reach the server. Make sure it is running." : "Something went wrong: " + err.message);
