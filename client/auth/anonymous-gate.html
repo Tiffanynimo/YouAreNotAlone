@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Anonymous Access | You Are Not Alone</title>
+  <link rel="stylesheet" href="auth.css" />
+  <style>
+    .gate-question {
+      color: #B68597;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .gate-subtitle {
+      color: #888;
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+    .gate-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .btn-yes {
+      background-color: #B68597;
+      color: white;
+      border: none;
+      width: 100%;
+      padding: 0.85rem;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .btn-yes:hover { background-color: #9C6C7F; }
+    .btn-no {
+      background-color: white;
+      color: #B68597;
+      border: 2px solid #B68597;
+      width: 100%;
+      padding: 0.85rem;
+      font-size: 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-weight: 600;
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn-no:hover { background-color: #f7eef1; }
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: #ccc;
+      font-size: 0.85rem;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e0d0d6;
+    }
+  </style>
+</head>
+<body class="auth-body">
+
+  <div class="auth-container">
+    <img src="logo.png" alt="Heart Logo" class="auth-logo" />
+    <h1>You Are Not Alone</h1>
+    <p class="subtitle">A safe space for healing and support</p>
+
+    <p class="gate-question">Are you a survivor of assault?</p>
+    <p class="gate-subtitle">Anonymous access is reserved for survivors who prefer to keep their identity private.</p>
+
+    <div class="gate-buttons">
+      <button class="btn-yes" onclick="window.location.href='anonymous.html'">
+        Yes — continue anonymously
+      </button>
+
+      <div class="divider">or</div>
+
+      <button class="btn-no" onclick="window.location.href='register.html'">
+        No — create a regular account
+      </button>
+    </div>
+
+    <p class="crisis" style="margin-top: 1.5rem;">Crisis Support: 1-800-656-4673</p>
+  </div>
+
+</body>
+</html>
