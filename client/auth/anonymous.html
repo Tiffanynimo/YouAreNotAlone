@@ -63,7 +63,7 @@
 
     <!-- Sign Up Panel -->
     <div class="tab-panel active" id="panel-signup">
-      <form id="anonSignupForm" onsubmit="return false">
+      <form id="anonSignupForm">
         <input id="signup-nickname" type="text" placeholder="Choose a nickname" autocomplete="username" required maxlength="30" />
         <input id="signup-password" type="password" placeholder="Choose a password (min 8 characters)" autocomplete="new-password" required />
         <div class="error-msg" id="signup-error"></div>
@@ -74,7 +74,7 @@
 
     <!-- Log In Panel -->
     <div class="tab-panel" id="panel-login">
-      <form id="anonLoginForm" onsubmit="return false">
+      <form id="anonLoginForm">
         <input id="login-nickname" type="text" placeholder="Your nickname" autocomplete="username" required />
         <input id="login-password" type="password" placeholder="Your password" autocomplete="current-password" required />
         <div class="error-msg" id="login-error"></div>
