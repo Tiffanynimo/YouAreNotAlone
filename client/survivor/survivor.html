@@ -277,6 +277,7 @@
                 </div>
               </div>
 
+              <div id="typing-indicator" style="display:none; padding:4px 16px; font-size:0.8rem; color:#888; font-style:italic;"></div>
               <div class="chat-input-area" id="chat-input-area" style="display: none;">
                 <textarea id="chat-message-input" placeholder="Type your message..." rows="1"></textarea>
                 <button id="send-message-btn" disabled>Send</button>
@@ -375,6 +376,7 @@
 // ===== IMPORTS =====
 import { requireSession, signOutAndRedirect, redirectToDashboard } from "../lib/auth-client.js";
 import { api, logActivity } from "../lib/api.js";
+import { initCrypto, getSharedKey, encryptMessage, decryptMessage } from "../lib/crypto.js";
 
 // ===== UI ELEMENTS =====
 const userNameEl = document.querySelector('.user-name');
@@ -703,6 +705,8 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 let currentChatId = null;
 let currentRecipient = null;
 let chatPollInterval = null;
+let myCryptoState = null;
+const chatSharedKeys = {};
 
 async function loadUsersForChat() {
   try {
@@ -825,7 +829,7 @@ function formatMessageTime(timestamp) {
   return messageDate.toLocaleDateString();
 }
 
-function openChat(chatId, recipientId, recipientName) {
+async function openChat(chatId, recipientId, recipientName) {
   currentChatId = chatId;
   currentRecipient = { id: recipientId, name: recipientName };
 
@@ -857,6 +861,21 @@ function openChat(chatId, recipientId, recipientName) {
   // Mark room messages as read
   api.put(`/chat/rooms/${chatId}/read`).catch(() => {});
   updateMsgBadge();
+
+  chatSharedKeys[chatId] = null;
+  const statusEl = document.getElementById('recipient-status');
+  if (statusEl) statusEl.textContent = 'Online';
+  if (myCryptoState && recipientId) {
+    fetch(`/api/crypto/public-key/${recipientId}`, { credentials: 'include' })
+      .then(r => r.ok ? r.json() : null)
+      .then(async data => {
+        if (data?.publicKey) {
+          chatSharedKeys[chatId] = await getSharedKey(myCryptoState.privateKey, data.publicKey);
+          if (statusEl) statusEl.textContent = '🔒 End-to-end encrypted';
+        }
+      })
+      .catch(() => {});
+  }
 }
 
 async function loadChatMessages(chatId) {
@@ -871,10 +890,10 @@ async function loadChatMessages(chatId) {
       return;
     }
 
-    messages.forEach(message => {
-      const messageElement = createMessageElement(message);
+    for (const message of messages) {
+      const messageElement = await createMessageElement(message);
       messagesContainer.appendChild(messageElement);
-    });
+    }
 
     setTimeout(() => {
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -884,17 +903,49 @@ async function loadChatMessages(chatId) {
   }
 }
 
-function createMessageElement(message) {
+async function createMessageElement(message) {
   const div = document.createElement('div');
   const isSent = message.sender_id === currentUser.id;
   const messageTime = new Date(message.created_at);
   const timeStr = messageTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
   div.className = `message ${isSent ? 'sent' : 'received'}`;
-  div.innerHTML = `
-    <div class="message-content">${message.text}</div>
-    <div class="message-time">${timeStr}</div>
-  `;
+  div.id = `msg-${message.id}`;
+
+  let displayText = message.text;
+  const sharedKey = chatSharedKeys[message.chat_room_id || currentChatId];
+  if (message.text.startsWith('ENC:') && sharedKey) {
+    try { displayText = await decryptMessage(sharedKey, message.text); }
+    catch { displayText = '[Encrypted message]'; }
+  }
+
+  const contentEl = document.createElement('div');
+  contentEl.className = 'message-content';
+  contentEl.textContent = displayText;
+
+  const timeEl = document.createElement('div');
+  timeEl.className = 'message-time';
+  timeEl.innerHTML = timeStr + (isSent ? ' <span class="read-receipt"></span>' : '');
+
+  div.appendChild(contentEl);
+  div.appendChild(timeEl);
+
+  if (isSent) {
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'delete-msg-btn';
+    deleteBtn.title = 'Delete message';
+    deleteBtn.textContent = '🗑';
+    deleteBtn.style.cssText = 'display:none;background:none;border:none;cursor:pointer;font-size:0.9rem;opacity:0.6;margin-left:4px;';
+    deleteBtn.addEventListener('click', async e => {
+      e.stopPropagation();
+      try { await api.delete(`/chat/messages/${message.id}`); div.remove(); }
+      catch (err) { console.error('Error deleting message:', err); }
+    });
+    div.addEventListener('mouseenter', () => { deleteBtn.style.display = 'inline'; });
+    div.addEventListener('mouseleave', () => { deleteBtn.style.display = 'none'; });
+    timeEl.appendChild(deleteBtn);
+  }
+
   return div;
 }
 
@@ -906,8 +957,13 @@ async function sendMessage() {
   if (!text || !currentChatId || !currentRecipient) return;
 
   try {
+    let msgText = text;
+    if (chatSharedKeys[currentChatId]) {
+      msgText = await encryptMessage(chatSharedKeys[currentChatId], text);
+    }
+    socket.emit('stop-typing', { roomId: currentChatId });
     await api.post(`/chat/rooms/${currentChatId}/messages`, {
-      text,
+      text: msgText,
       recipientId: currentRecipient.id,
       recipientName: currentRecipient.name,
     });
@@ -934,10 +990,20 @@ function initChat() {
   const sendBtn = document.getElementById('send-message-btn');
   if (!messageInput || !sendBtn) return;
 
+  let typingTimeout = null;
   messageInput.addEventListener('input', function() {
     this.style.height = 'auto';
     this.style.height = this.scrollHeight + 'px';
     sendBtn.disabled = !this.value.trim();
+    if (currentChatId) {
+      socket.emit('typing', { roomId: currentChatId });
+      clearTimeout(typingTimeout);
+      typingTimeout = setTimeout(() => socket.emit('stop-typing', { roomId: currentChatId }), 2000);
+    }
+  });
+
+  messageInput.addEventListener('blur', () => {
+    if (currentChatId) socket.emit('stop-typing', { roomId: currentChatId });
   });
 
   messageInput.addEventListener('keypress', function(e) {
@@ -951,12 +1017,12 @@ function initChat() {
 }
 
 // ===== REAL-TIME CHAT =====
-socket.on("new-message", (message) => {
+socket.on("new-message", async (message) => {
   if (!currentUser) return;
   if (message.chat_room_id === currentChatId) {
     const messagesContainer = document.getElementById('chat-messages');
     if (messagesContainer) {
-      const el = createMessageElement(message);
+      const el = await createMessageElement(message);
       messagesContainer.appendChild(el);
       messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
@@ -989,6 +1055,7 @@ async function updateMsgBadge() {
   const userData = await loadSurvivor(session);
   if (!userData) return;
 
+  myCryptoState = await initCrypto(currentUser.id).catch(() => null);
   loadDashboardStats();
   loadAppointments();
   loadResources();
@@ -998,6 +1065,33 @@ async function updateMsgBadge() {
   updateMsgBadge();
   setInterval(updateMsgBadge, 30000);
 })();
+
+socket.on("typing", ({ senderId }) => {
+  if (!currentRecipient || senderId !== currentRecipient.id) return;
+  const indicator = document.getElementById('typing-indicator');
+  if (indicator) {
+    indicator.textContent = `${currentRecipient.name} is typing...`;
+    indicator.style.display = 'block';
+    clearTimeout(indicator._timer);
+    indicator._timer = setTimeout(() => { indicator.style.display = 'none'; }, 3000);
+  }
+});
+
+socket.on("stop-typing", ({ senderId }) => {
+  if (!currentRecipient || senderId !== currentRecipient.id) return;
+  const indicator = document.getElementById('typing-indicator');
+  if (indicator) indicator.style.display = 'none';
+});
+
+socket.on("messages-read", ({ readBy }) => {
+  if (!currentRecipient || readBy !== currentRecipient.id) return;
+  const receipts = document.querySelectorAll('.message.sent .read-receipt');
+  if (receipts.length > 0) receipts[receipts.length - 1].textContent = ' ✓ Seen';
+});
+
+socket.on("message-deleted", ({ messageId }) => {
+  document.getElementById(`msg-${messageId}`)?.remove();
+});
 </script>
 
 <script type="module">

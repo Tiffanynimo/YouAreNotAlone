@@ -51,7 +51,7 @@ router.post("/rooms", requireAuth, async (req, res) => {
 router.get("/rooms/:id/messages", requireAuth, async (req, res) => {
   try {
     const { rows } = await pool.query(
-      "SELECT * FROM messages WHERE chat_room_id = $1 ORDER BY created_at ASC",
+      "SELECT * FROM messages WHERE chat_room_id = $1 AND deleted_at IS NULL ORDER BY created_at ASC",
       [req.params.id]
     );
     res.json(rows);
@@ -115,6 +115,11 @@ router.put("/rooms/:id/read", requireAuth, async (req, res) => {
       "UPDATE messages SET read = TRUE WHERE chat_room_id = $1 AND recipient_id = $2 AND read = FALSE",
       [req.params.id, req.user.id]
     );
+    // Notify room that messages were read
+    const io = req.app.locals.io;
+    if (io) {
+      io.to(`chat:${req.params.id}`).emit("messages-read", { readBy: req.user.id });
+    }
     res.json({ message: "Marked as read" });
   } catch (err) {
     console.error("Error marking messages as read:", err);
@@ -130,6 +135,28 @@ router.put("/messages/:id/read", requireAuth, async (req, res) => {
   } catch (err) {
     console.error("Error marking message read:", err);
     res.status(500).json({ error: "Failed to mark as read" });
+  }
+});
+
+// DELETE /api/chat/messages/:id — soft-delete a message (sender only)
+router.delete("/messages/:id", requireAuth, async (req, res) => {
+  try {
+    const result = await pool.query(
+      "UPDATE messages SET deleted_at = NOW() WHERE id = $1 AND sender_id = $2 RETURNING *",
+      [req.params.id, req.user.id]
+    );
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: "Message not found or not authorized" });
+    }
+    const message = result.rows[0];
+    const io = req.app.locals.io;
+    if (io) {
+      io.to(`chat:${message.chat_room_id}`).emit("message-deleted", { messageId: message.id });
+    }
+    res.json({ message: "Deleted" });
+  } catch (err) {
+    console.error("Error deleting message:", err);
+    res.status(500).json({ error: "Failed to delete message" });
   }
 });
 

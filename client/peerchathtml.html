@@ -65,6 +65,12 @@
   .user-item:hover, .user-item.active { background: #B68597; color: white; }
   .user-item .dot { width: 8px; height: 8px; background: #4caf50; border-radius: 50%; flex-shrink: 0; }
   .user-item.me { font-style: italic; cursor: default; }
+  .dm-badge {
+    background: #e74c3c; color: white; border-radius: 50%;
+    min-width: 18px; height: 18px; font-size: 0.7rem;
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-left: auto; padding: 0 3px;
+  }
 
   /* Chat area */
   .chat-area { flex: 1; display: flex; flex-direction: column; padding: 16px; min-width: 0; }
@@ -90,7 +96,7 @@
   .system-msg { text-align: center; font-size: 0.78rem; color: #888; margin: 6px 0; font-style: italic; }
 
   /* Input bar */
-  .input-bar { display: flex; margin-top: 12px; gap: 8px; }
+  .input-bar { display: flex; margin-top: 12px; gap: 8px; align-items: flex-end; }
   .input-bar input {
     flex: 1; padding: 11px 14px; border-radius: 12px; border: none;
     background: #fff; font-size: 0.95rem; outline: none;
@@ -103,6 +109,7 @@
   }
   .input-bar button:hover { background: #9C6C7F; }
   .input-bar button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .char-counter { font-size: 0.72rem; color: #aaa; text-align: right; margin-top: 2px; }
 
   /* Private popup */
   .private-popup {
@@ -122,7 +129,8 @@
     background: rgba(255,255,255,0.25); user-select: none;
   }
   .private-messages { height: 220px; padding: 10px; overflow-y: auto; scroll-behavior: smooth; }
-  .private-input { display: flex; padding: 10px; gap: 6px; }
+  .private-input { display: flex; flex-direction: column; padding: 10px; gap: 4px; }
+  .private-input-row { display: flex; gap: 6px; }
   .private-input input {
     flex: 1; padding: 8px 12px; border-radius: 10px;
     border: none; background: #DAB6C2; font-size: 0.9rem;
@@ -132,6 +140,10 @@
     color: white; border-radius: 10px; cursor: pointer; font-weight: bold;
   }
   .private-input button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .typing-indicator {
+    padding: 4px 10px; font-size: 0.78rem; color: #999;
+    font-style: italic; display: none;
+  }
 
   /* Loading state */
   .loading-history { text-align: center; color: #aaa; font-size: 0.82rem; padding: 12px; }
@@ -160,9 +172,10 @@
     <div class="chat-title" id="chat-title">Public Room</div>
     <div class="messages" id="publicMessages"></div>
     <div class="input-bar">
-      <input id="publicInput" placeholder="Type a message to everyone..." />
+      <input id="publicInput" placeholder="Type a message to everyone..." maxlength="500" />
       <button id="sendPublicBtn">Send</button>
     </div>
+    <div class="char-counter" id="publicCounter">0 / 500</div>
   </div>
 </div>
 
@@ -173,19 +186,30 @@
     <span class="close-btn" id="closePrivateBtn">✕</span>
   </div>
   <div class="private-messages" id="privateMessages"></div>
+  <div class="typing-indicator" id="dmTypingIndicator"></div>
   <div class="private-input">
-    <input id="privateInput" placeholder="Message..." />
-    <button id="sendPrivateBtn">Send</button>
+    <div class="private-input-row">
+      <input id="privateInput" placeholder="Message..." maxlength="500" />
+      <button id="sendPrivateBtn">Send</button>
+    </div>
+    <div class="char-counter" id="privateCounter">0 / 500</div>
   </div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
-<script>
+<script type="module">
+  import { initCrypto, getSharedKey, encryptMessage, decryptMessage } from "/lib/crypto.js";
+
   const socket = io();
 
   let myNickname = "";
   let myUserId = null;
   let privateChatTarget = null;
+  let privateChatTargetId = null;
+  let myCryptoState = null;  // { privateKey, publicKeyB64 }
+  let dmSharedKey = null;    // AES-GCM key for current DM
+  const dmUnread = {};       // nickname → unread count
+  const pendingMessages = {}; // nickname → queued incoming messages
 
   function formatTime(isoString) {
     return new Date(isoString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -195,15 +219,39 @@
     const box = document.createElement("div");
     box.className = "bubble" + (isSelf ? " self" : "");
     box.innerHTML = `
-      <div class="sender">${isSelf ? "You" : nickname}</div>
+      <div class="sender">${isSelf ? "You" : escapeHtml(nickname)}</div>
       ${escapeHtml(text)}
       <span class="timestamp">${formatTime(timestamp)}</span>
     `;
     container.appendChild(box);
   }
 
+  // Decrypt bubble text in-place if E2EE prefix found
+  async function makeBubbleDecrypted({ nickname, text, timestamp, isSelf, container }) {
+    const box = document.createElement("div");
+    box.className = "bubble" + (isSelf ? " self" : "");
+    const contentSpan = document.createElement("span");
+
+    if (text.startsWith("ENC:") && dmSharedKey) {
+      contentSpan.textContent = "...";
+      decryptMessage(dmSharedKey, text)
+        .then(plain => { contentSpan.textContent = plain; })
+        .catch(() => { contentSpan.textContent = "[Encrypted message]"; });
+    } else {
+      contentSpan.textContent = text.startsWith("ENC:") ? "[Encrypted message]" : text;
+    }
+
+    box.innerHTML = `<div class="sender">${isSelf ? "You" : escapeHtml(nickname)}</div>`;
+    box.appendChild(contentSpan);
+    const ts = document.createElement("span");
+    ts.className = "timestamp";
+    ts.textContent = formatTime(timestamp);
+    box.appendChild(ts);
+    container.appendChild(box);
+  }
+
   function escapeHtml(str) {
-    return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
   }
 
   function scrollBottom(el) {
@@ -220,6 +268,10 @@
         const nickname = data.user.fullname || data.user.name || '';
         if (nickname) {
           document.getElementById("nickname-input").value = nickname;
+          // Init E2EE for authenticated users
+          if (myUserId) {
+            myCryptoState = await initCrypto(myUserId).catch(() => null);
+          }
           joinChat();
         }
       }
@@ -238,6 +290,9 @@
     const val = document.getElementById("nickname-input").value.trim();
     if (!val) return;
     myNickname = val;
+
+    const errEl = document.getElementById("join-error");
+    errEl.style.display = "none";
 
     document.getElementById("nickname-screen").style.display = "none";
     document.getElementById("chat-wrapper").classList.add("visible");
@@ -267,9 +322,19 @@
       pubMsgs.innerHTML = '';
     }
 
-    addSystemMessage(`You joined as <strong>${myNickname}</strong>`);
+    addSystemMessage(`You joined as <strong>${escapeHtml(myNickname)}</strong>`);
     scrollBottom(pubMsgs);
   }
+
+  // ── Nickname taken ─────────────────────────────────────────────
+  socket.on("nickname-taken", () => {
+    myNickname = "";
+    document.getElementById("chat-wrapper").classList.remove("visible");
+    document.getElementById("nickname-screen").style.display = "block";
+    const errEl = document.getElementById("join-error");
+    errEl.textContent = "Nickname already in use, please choose another";
+    errEl.style.display = "block";
+  });
 
   // ── Online users list ─────────────────────────────────────────────
   socket.on("online-users", (users) => {
@@ -282,10 +347,27 @@
       const div = document.createElement("div");
       const isMe = u.nickname === myNickname;
       div.className = "user-item" + (isMe ? " me" : "") + (u.nickname === privateChatTarget ? " active" : "");
-      div.innerHTML = `<span class="dot"></span>${escapeHtml(u.nickname)}${isMe ? ' (you)' : ''}`;
+
+      const dot = document.createElement("span");
+      dot.className = "dot";
+      div.appendChild(dot);
+
+      const nameSpan = document.createElement("span");
+      nameSpan.textContent = u.nickname + (isMe ? ' (you)' : '');
+      div.appendChild(nameSpan);
+
+      // Unread badge
+      const unread = dmUnread[u.nickname] || 0;
+      if (unread > 0) {
+        const badge = document.createElement("span");
+        badge.className = "dm-badge";
+        badge.textContent = unread;
+        div.appendChild(badge);
+      }
+
       if (!isMe) {
         div.title = `Click to private message ${u.nickname}`;
-        div.addEventListener("click", () => openPrivateChat(u.nickname));
+        div.addEventListener("click", () => openPrivateChat(u.nickname, u.id || null));
       }
       container.appendChild(div);
     });
@@ -296,13 +378,17 @@
   document.getElementById("publicInput").addEventListener("keydown", e => {
     if (e.key === "Enter") sendPublic();
   });
+  document.getElementById("publicInput").addEventListener("input", function() {
+    document.getElementById("publicCounter").textContent = `${this.value.length} / 500`;
+  });
 
   function sendPublic() {
     const input = document.getElementById("publicInput");
     const text = input.value.trim();
-    if (!text || !myNickname) return;
+    if (!text || text.length > 500 || !myNickname) return;
     socket.emit("public-message", { nickname: myNickname, text, userId: myUserId });
     input.value = "";
+    document.getElementById("publicCounter").textContent = "0 / 500";
   }
 
   socket.on("public-message", ({ nickname, text, timestamp }) => {
@@ -312,16 +398,42 @@
   });
 
   // ── Private chat ──────────────────────────────────────────────────
-  async function openPrivateChat(targetNickname) {
+  async function openPrivateChat(targetNickname, targetUserId = null) {
     privateChatTarget = targetNickname;
+    privateChatTargetId = targetUserId;
+    dmSharedKey = null;
+
     document.getElementById("privateChatTitle").textContent = `💬 ${targetNickname}`;
     document.getElementById("privateMessages").innerHTML = '<div class="loading-history">Loading...</div>';
     document.getElementById("privatePopup").classList.add("open");
     document.getElementById("privateInput").focus();
 
+    // Clear unread badge for this user
+    dmUnread[targetNickname] = 0;
+    // Refresh user list to clear badge
+    // (will update on next online-users event; clear immediately in DOM)
     document.querySelectorAll(".user-item").forEach(el => {
-      el.classList.toggle("active", el.textContent.includes(targetNickname));
+      const nameEl = el.querySelector("span:not(.dot):not(.dm-badge)");
+      if (nameEl && nameEl.textContent.startsWith(targetNickname)) {
+        const badge = el.querySelector(".dm-badge");
+        if (badge) badge.remove();
+      }
+      el.classList.toggle("active", el.querySelector("span:not(.dot):not(.dm-badge)")?.textContent.startsWith(targetNickname));
     });
+
+    // E2EE setup if both users are authenticated
+    if (myCryptoState && targetUserId) {
+      try {
+        const res = await fetch(`/api/crypto/public-key/${targetUserId}`, { credentials: 'include' });
+        if (res.ok) {
+          const { publicKey } = await res.json();
+          dmSharedKey = await getSharedKey(myCryptoState.privateKey, publicKey);
+          document.getElementById("privateChatTitle").textContent = `💬 ${targetNickname} 🔒`;
+        }
+      } catch (e) {
+        dmSharedKey = null;
+      }
+    }
 
     // Load DM history from DB
     try {
@@ -331,24 +443,36 @@
 
       const container = document.getElementById("privateMessages");
       container.innerHTML = '';
-      history.forEach(msg => {
-        makeBubble({
+      for (const msg of history) {
+        await makeBubbleDecrypted({
           nickname: msg.sender_nickname,
           text: msg.text,
           timestamp: msg.created_at,
           isSelf: msg.sender_nickname === myNickname,
           container,
         });
-      });
+      }
       scrollBottom(container);
     } catch (e) {
       document.getElementById("privateMessages").innerHTML = '';
+    }
+
+    // Flush any pending messages that arrived before history loaded
+    if (pendingMessages[targetNickname]) {
+      const container = document.getElementById("privateMessages");
+      for (const msg of pendingMessages[targetNickname]) {
+        await makeBubbleDecrypted({ nickname: msg.from, text: msg.text, timestamp: msg.timestamp, isSelf: false, container });
+      }
+      delete pendingMessages[targetNickname];
+      scrollBottom(container);
     }
   }
 
   document.getElementById("closePrivateBtn").addEventListener("click", () => {
     document.getElementById("privatePopup").classList.remove("open");
     privateChatTarget = null;
+    privateChatTargetId = null;
+    dmSharedKey = null;
     document.querySelectorAll(".user-item").forEach(el => el.classList.remove("active"));
   });
 
@@ -356,31 +480,65 @@
   document.getElementById("privateInput").addEventListener("keydown", e => {
     if (e.key === "Enter") sendPrivate();
   });
+  document.getElementById("privateInput").addEventListener("input", function() {
+    document.getElementById("privateCounter").textContent = `${this.value.length} / 500`;
+    // Typing indicator
+    if (privateChatTarget) {
+      socket.emit("typing", { toNickname: privateChatTarget });
+    }
+  });
 
-  function sendPrivate() {
+  async function sendPrivate() {
     const input = document.getElementById("privateInput");
     const text = input.value.trim();
-    if (!text || !privateChatTarget || !myNickname) return;
+    if (!text || text.length > 500 || !privateChatTarget || !myNickname) return;
+
+    let outText = text;
+    if (dmSharedKey) {
+      outText = await encryptMessage(dmSharedKey, text);
+    }
+
     socket.emit("private-message", {
       toNickname: privateChatTarget,
       fromNickname: myNickname,
-      text,
+      text: outText,
       userId: myUserId,
     });
     input.value = "";
+    document.getElementById("privateCounter").textContent = "0 / 500";
+    socket.emit("stop-typing", { toNickname: privateChatTarget });
   }
 
-  socket.on("private-message", ({ from, to, text, timestamp, isSelf }) => {
+  socket.on("private-message", async ({ from, to, text, timestamp, isSelf }) => {
     const container = document.getElementById("privateMessages");
 
-    // If incoming from someone else and popup isn't open for them, open it
-    if (!isSelf && from !== myNickname && privateChatTarget !== from) {
-      openPrivateChat(from);
-      return; // openPrivateChat will load history; incoming will be added separately
+    // Incoming from someone else and popup isn't open for them → queue + open
+    if (!isSelf && privateChatTarget !== from) {
+      dmUnread[from] = (dmUnread[from] || 0) + 1;
+      if (!pendingMessages[from]) pendingMessages[from] = [];
+      pendingMessages[from].push({ from, text, timestamp });
+      openPrivateChat(from, null);
+      return;
     }
 
-    makeBubble({ nickname: from, text, timestamp, isSelf: !!isSelf, container });
+    await makeBubbleDecrypted({ nickname: from, text, timestamp, isSelf: !!isSelf, container });
     scrollBottom(container);
+  });
+
+  // ── Typing indicators (peer DMs) ──────────────────────────────────
+  socket.on("typing", ({ from }) => {
+    if (from !== privateChatTarget) return;
+    const indicator = document.getElementById("dmTypingIndicator");
+    indicator.textContent = `${escapeHtml(from)} is typing...`;
+    indicator.style.display = "block";
+    clearTimeout(indicator._timer);
+    indicator._timer = setTimeout(() => { indicator.style.display = "none"; }, 3000);
+  });
+
+  socket.on("stop-typing", ({ from }) => {
+    if (from !== privateChatTarget) return;
+    const indicator = document.getElementById("dmTypingIndicator");
+    indicator.style.display = "none";
   });
 
   // ── System messages ───────────────────────────────────────────────

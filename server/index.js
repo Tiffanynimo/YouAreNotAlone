@@ -40,6 +40,12 @@ const onlineUsers = new Map();
 io.on("connection", (socket) => {
   // Client sends { id, nickname } on connect
   socket.on("join", ({ id, nickname }) => {
+    // Check for nickname collision
+    const taken = Array.from(onlineUsers.values()).some(u => u.nickname === nickname);
+    if (taken) {
+      socket.emit("nickname-taken");
+      return;
+    }
     onlineUsers.set(socket.id, { id, nickname });
     // Broadcast updated user list to everyone
     io.emit("online-users", Array.from(onlineUsers.values()));
@@ -50,8 +56,38 @@ io.on("connection", (socket) => {
     socket.join(`chat:${roomId}`);
   });
 
+  // Typing indicators (peer chat uses toNickname, dashboard chat uses roomId)
+  socket.on("typing", (data) => {
+    if (data.toNickname) {
+      const senderNickname = onlineUsers.get(socket.id)?.nickname;
+      for (const [sid, user] of onlineUsers.entries()) {
+        if (user.nickname === data.toNickname) {
+          io.to(sid).emit("typing", { from: senderNickname });
+          break;
+        }
+      }
+    } else if (data.roomId) {
+      socket.to(`chat:${data.roomId}`).emit("typing", { senderId: onlineUsers.get(socket.id)?.id });
+    }
+  });
+
+  socket.on("stop-typing", (data) => {
+    if (data.toNickname) {
+      const senderNickname = onlineUsers.get(socket.id)?.nickname;
+      for (const [sid, user] of onlineUsers.entries()) {
+        if (user.nickname === data.toNickname) {
+          io.to(sid).emit("stop-typing", { from: senderNickname });
+          break;
+        }
+      }
+    } else if (data.roomId) {
+      socket.to(`chat:${data.roomId}`).emit("stop-typing", { senderId: onlineUsers.get(socket.id)?.id });
+    }
+  });
+
   // Public message — save to DB and broadcast to all
   socket.on("public-message", ({ nickname, text, userId }) => {
+    if (!text || text.length > 500) return;
     const timestamp = new Date().toISOString();
 
     // Save to PostgreSQL (fire and forget)
@@ -65,6 +101,7 @@ io.on("connection", (socket) => {
 
   // Private message — save to DB and send to recipient
   socket.on("private-message", ({ toNickname, fromNickname, text, userId }) => {
+    if (!text || text.length > 500) return;
     const timestamp = new Date().toISOString();
 
     // Save to PostgreSQL (fire and forget)
@@ -118,6 +155,7 @@ app.use("/api/notes", require("./routes/notes"));
 app.use("/api/resources", require("./routes/resources"));
 app.use("/api/flagged-messages", require("./routes/flaggedMessages"));
 app.use("/api/peer-chat", require("./routes/peerChat"));
+app.use("/api/crypto", require("./routes/crypto"));
 
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, "..", "client")));

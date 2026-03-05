@@ -135,6 +135,17 @@ CREATE TABLE IF NOT EXISTS peer_chat_messages (
 CREATE INDEX IF NOT EXISTS idx_peer_chat_type ON peer_chat_messages(type, created_at);
 CREATE INDEX IF NOT EXISTS idx_peer_chat_dm ON peer_chat_messages(sender_nickname, recipient_nickname, created_at);
 
+-- E2EE public key storage
+CREATE TABLE IF NOT EXISTS user_public_keys (
+  user_id TEXT PRIMARY KEY,
+  public_key TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Encrypted flag and soft-delete for messages
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS encrypted BOOLEAN DEFAULT FALSE;
+ALTER TABLE messages ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMPTZ;
+
 -- Flagged messages (content moderation)
 CREATE TABLE IF NOT EXISTS flagged_messages (
   id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
