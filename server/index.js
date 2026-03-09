@@ -87,7 +87,7 @@ io.on("connection", (socket) => {
 
   // Public message — save to DB and broadcast to all
   socket.on("public-message", ({ nickname, text, userId }) => {
-    if (!text || text.length > 500) return;
+    if (!text || text.length > 500 || !nickname || typeof nickname !== "string") return;
     const timestamp = new Date().toISOString();
 
     // Save to PostgreSQL (fire and forget)
@@ -101,7 +101,7 @@ io.on("connection", (socket) => {
 
   // Private message — save to DB and send to recipient
   socket.on("private-message", ({ toNickname, fromNickname, text, userId }) => {
-    if (!text || text.length > 500) return;
+    if (!text || text.length > 500 || !fromNickname || !toNickname || typeof fromNickname !== "string" || typeof toNickname !== "string") return;
     const timestamp = new Date().toISOString();
 
     // Save to PostgreSQL (fire and forget)

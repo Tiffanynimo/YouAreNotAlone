@@ -64,7 +64,7 @@ export async function getSharedKey(myPrivateKey, theirPublicKeyB64) {
   const theirPublicKey = await crypto.subtle.importKey(
     "jwk", theirPublicKeyJwk, ALGO, false, []
   );
-  return crypto.subtle.deriveKey(
+  return await crypto.subtle.deriveKey(
     { name: "ECDH", public: theirPublicKey },
     myPrivateKey,
     { name: "AES-GCM", length: 256 },

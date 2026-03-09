@@ -538,6 +538,7 @@
   socket.on("stop-typing", ({ from }) => {
     if (from !== privateChatTarget) return;
     const indicator = document.getElementById("dmTypingIndicator");
+    clearTimeout(indicator._timer);
     indicator.style.display = "none";
   });
 
