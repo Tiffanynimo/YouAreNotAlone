@@ -233,6 +233,25 @@
       </li>
     </ul>
   </div>
+
+  <!-- Map: find nearby support facilities -->
+  <section class="panel map-panel" aria-labelledby="map-heading" style="margin-top:1.5rem;">
+    <h3 id="map-heading" style="color:#7a3e52; margin-bottom:1rem;">🗺️ Find Nearby Support Facilities</h3>
+    <div class="map-controls">
+      <button id="use-location-btn" class="btn">📍 Use My Location</button>
+      <form id="address-form" class="address-form" autocomplete="off">
+        <label for="address-input">Or enter your location</label>
+        <div class="address-row">
+          <input id="address-input" type="text" placeholder="e.g., Mwiki, Kiambu"
+            aria-label="Enter your location" required />
+          <button type="submit" class="btn">Search</button>
+        </div>
+      </form>
+    </div>
+    <div id="map" style="height:420px; border-radius:8px; overflow:hidden; margin-top:1rem;"></div>
+    <div id="results" class="results" aria-live="polite" style="margin-top:1rem;"></div>
+  </section>
+
 </section>
 
 
@@ -330,36 +349,6 @@
           <div id="profile-message" class="message" style="display: none;"></div>
         </div>
       </section>
-
-        <!-- Find Medical Centres -->
-<section class="panel map-panel" aria-labelledby="map-heading">
-  <h3 id="map-heading">Find medical centres near you</h3>
-
-  <!-- Search / locate controls -->
-  <div class="map-controls">
-    <button id="use-location-btn" class="btn">Use my location</button>
-
-    <form id="address-form" class="address-form" autocomplete="off">
-      <label for="address-input">Or enter your location</label>
-      <div class="address-row">
-        <input
-          id="address-input"
-          type="text"
-          placeholder="e.g., Mwiki, Kiambu"
-          aria-label="Enter your location"
-          required
-        />
-        <button type="submit" class="btn">Search</button>
-      </div>
-    </form>
-  </div>
-
-  <!-- Map container -->
-  <div id="map" style="height: 420px; border-radius: 8px; overflow: hidden;"></div>
-
-  <!-- Results list -->
-  <div id="results" class="results" aria-live="polite"></div>
-</section>
 
         <!-- Footer -->
       <footer class="dashboard-footer">

@@ -93,6 +93,11 @@ import { signUp, signIn, redirectToDashboard } from "../lib/auth-client.js";
 document.getElementById("tab-signup").addEventListener("click", () => switchTab("signup"));
 document.getElementById("tab-login").addEventListener("click", () => switchTab("login"));
 
+// Auto-switch to login tab if ?tab=login in URL
+if (new URLSearchParams(window.location.search).get("tab") === "login") {
+  switchTab("login");
+}
+
 function switchTab(tab) {
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
   document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
